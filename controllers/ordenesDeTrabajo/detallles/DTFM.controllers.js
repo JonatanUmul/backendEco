@@ -2,14 +2,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDTFM = async (req, res) => {
 
-    const { id_OTFM, id_Aserradero, cantidad, peso, humedad , id_creador, id_matPrim} = req.body;
+    const { id_OTFM, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim} = req.body;
     console.log(id_OTFM)
     try {
         if (id_OTFM === '' || id_Aserradero === '' || cantidad === '' || peso === '' || humedad === '') {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtfm(id_OTFM, id_Aserradero, cantidad, peso, humedad,id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const [rows] = await pool.query(consulta, [id_OTFM, id_Aserradero, cantidad, peso, humedad, id_creador, id_matPrim]);
+            const consulta = 'INSERT INTO dtfm(id_OTFM, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso,peso2, humedad,humedad2,id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?,?,?)';
+            const [rows] = await pool.query(consulta, [id_OTFM, id_Aserradero,id_Aserradero2, id_cernidodetalle, id_cernidodetalle2,peso2, cantidad, peso, humedad,humedad2, id_creador, id_matPrim]);
             res.send({ rows });
         }
     } catch (err) {

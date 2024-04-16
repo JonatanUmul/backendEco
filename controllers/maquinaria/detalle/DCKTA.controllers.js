@@ -77,7 +77,7 @@ left JOIN
 left JOIN 
     respuestas r3 ON d.id_accionamientoCorrectoSelenoideAlimentacion = r3.id
 WHERE 
-    d.id_CKTA = 1;
+    d.id_CKTA = ?;
     
     `
     const [rows]= await pool.query(consulta, [id])

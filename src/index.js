@@ -102,6 +102,7 @@
     import  OTCC from './routes/ordenesDeTrabajo/encabezados/OTCC.routes.js'
     import DTCC from './routes/ordenesDeTrabajo/detallados/DTCC.routes.js'
     import dotenv from 'dotenv';
+    import CernidoDetalle from './routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
 
 // Carga las variables de entorno desde el archivo .env
    dotenv.config();
@@ -133,8 +134,9 @@ app.use(function(req, res, next) {
     app.use(Loginroutes);
 
 
-    //login
+    //Tipo cernido
     app.use(TipoCernido);
+    app.use(CernidoDetalle);
 
     //login
     app.use(TipoMantenimiento);

@@ -37,6 +37,7 @@
    import DTIP from './routes/ordenesDeTrabajo/detallados/DTIP.routes.js'
     import OTHH from './routes/ordenesDeTrabajo/encabezados/OTHH.routes.js'
     import maquinaria from './routes/mantenimientos/maquinaria/Maquinaria.routes.js'
+    import Estadouf from './routes/mantenimientos/estadosUF/EstadosUF.routes.js'
     import Operarios from './routes/mantenimientos/operarios/OperariosAreas.routes.js'
     import DTHH from './routes/ordenesDeTrabajo/detallados/DTHH.routes.js'
     import CPS from './routes/controlProcesos/encabezados/CPS.routes.js'
@@ -103,7 +104,7 @@
     import DTCC from './routes/ordenesDeTrabajo/detallados/DTCC.routes.js'
     import dotenv from 'dotenv';
     import CernidoDetalle from './routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
-
+  import GrupodeTrabajo from './routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
 // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -133,6 +134,8 @@ app.use(function(req, res, next) {
     //login
     app.use(Loginroutes);
 
+    //Estado UF
+    app.use(Estadouf)
 
     //Tipo cernido
     app.use(TipoCernido);
@@ -152,6 +155,9 @@ app.use(function(req, res, next) {
 
     //Turnos de Produccion
     app.use(Turnos);
+
+       //Grupos de Trabajo
+    app.use(GrupodeTrabajo);
 
     //Hornos
     app.use(maquinaria);

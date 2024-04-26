@@ -5,6 +5,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDCKPH2 = async(req, res)=>{
   const {
+    id_grupoProduccion,
     id_CKPH2,
     id_verificadoCorrectoAccionamientoDebomba,
 	  id_sensorInfrarrojaLimpio,
@@ -25,14 +26,17 @@ export const postDCKPH2 = async(req, res)=>{
    
    
     try{
-    if(id_verificadoCorrectoAccionamientoDebomba===''||
-      id_sensorInfrarrojaLimpio===''||
-      id_SecompruebaSensorBarreraInfrarrojaFuncionaCorrectamente===''||
-      id_mangueraHidráulicaEstaEnBuenEstadoSinFugasAceite===''||
-      id_integridadDeLosBujesYBarrasPrincipalesEstaBuenEstadoSinDaños===''||
-      id_elGrupoAnteriorCompletoSatisfactoriamenteLimpiezaGenera){
-
+      const camposVacios = [];
+    
+      if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+   
+      if (camposVacios.length > 0) {
+        const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+        console.log(mensaje);
+        res.status(400).send({ error: mensaje });
+      } else {
         const consulta=`INSERT INTO dckph2 (
+          id_grupoProduccion,
           id_CKPH2,
           id_verificadoCorrectoAccionamientoDebomba,
           id_sensorInfrarrojaLimpio,
@@ -48,8 +52,9 @@ export const postDCKPH2 = async(req, res)=>{
          observacion3,
          observacion4,
          observacion5,	
-         observacion6) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+         observacion6) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
               const [rows]= await pool.query(consulta,[
+                id_grupoProduccion,
                 id_CKPH2,
                 id_verificadoCorrectoAccionamientoDebomba,
                 id_sensorInfrarrojaLimpio,
@@ -67,16 +72,12 @@ export const postDCKPH2 = async(req, res)=>{
                observacion5,	
                observacion6
               ])
-              res.send({rows});
-      }else{
-        res.status(400).send('Uno o varios datos están vacíos');
-      }
-
-     
-        
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+              res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
+ 
+      }  
+    } catch (err) {
+      console.error('Error al guardar los datos:', err);
+      res.status(500).send({ error: 'Error al guardar los datos' });
     }
 }
 

@@ -6,7 +6,7 @@ export const postDTHH = async(req, res)=>{
     const estado= 2;
     
     const {
-        id_OTHH, id_turno, id_aserradero, id_tipCernido, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin
+        id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2
      } = req.body;
     
 
@@ -15,8 +15,8 @@ export const postDTHH = async(req, res)=>{
             console.log('Uno o varios datos estan vacios')
         }
         else{
-            const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_tipCernido, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin)Values(?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?)';
-        const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_tipCernido, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin])
+            const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?)';
+        const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2])
         res.send({rows});
         }
         
@@ -56,7 +56,7 @@ LEFT JOIN
 LEFT JOIN 
     aserradero ON d.id_aserradero = aserradero.id
 LEFT JOIN 
-    tipocernido ON d.id_tipCernido= tipocernido.id
+    tipocernido ON d.id_cernidodetalle= tipocernido.id
 LEFT JOIN
 	ufmodelo on d.id_modelo= ufmodelo.id_mod
 LEFT JOIN

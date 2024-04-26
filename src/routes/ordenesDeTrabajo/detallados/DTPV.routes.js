@@ -8,5 +8,5 @@ const router = Router();
 
 router.post('/DTPV', postDTPV);
 router.get('/DTPV/:id', getDTPV);
-router.get('/DTPV/:fecha_creacion/:id_aserradero', getDTPVS);
+router.get('/DTPV/:fecha_creacion_inicio/:fecha_creacion_fin', getDTPVS);
 export default router;

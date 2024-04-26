@@ -2,9 +2,9 @@ import { pool } from "../../../src/db.js";
 
       
 
-
-export const postDCKBT = async(req, res)=>{
+export const postDCKBT = async (req, res) => {
   const {
+    id_grupoProduccion,
     id_CKBT,
     id_limpiezaBandaYRodillos,
     id_lubricacionChumaceras,
@@ -13,12 +13,24 @@ export const postDCKBT = async(req, res)=>{
     observacion1,
     observacion2,
     observacion3,
-    }= req.body
-   
-   
-    try{
+  } = req.body;
+
+  try {
+    const camposVacios = [];
     
-       const consulta=`INSERT INTO dckbt(
+    if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+    if (id_CKBT === '') camposVacios.push('CKBT');
+    if (id_limpiezaBandaYRodillos === '') camposVacios.push('Limpieza de Banda y Rodillos');
+    if (id_lubricacionChumaceras === '') camposVacios.push('Lubricación de Chumaceras');
+    if (id_accionamientoCorrectoDeMotor === '') camposVacios.push('Accionamiento Correcto de Motor');
+
+    if (camposVacios.length > 0) {
+      const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+      console.log(mensaje);
+      res.status(400).send({ error: mensaje });
+    } else {
+      const consulta = `INSERT INTO dckbt(
+        id_grupoProduccion,
         id_CKBT,
         id_limpiezaBandaYRodillos,
         id_lubricacionChumaceras,
@@ -26,24 +38,27 @@ export const postDCKBT = async(req, res)=>{
         id_creador,
         observacion1,
         observacion2,
-        observacion3) Values(?,?,?,?,?,?,?,?)`;
-        const [rows]= await pool.query(consulta,[
-          id_CKBT,
-          id_limpiezaBandaYRodillos,
-          id_lubricacionChumaceras,
-          id_accionamientoCorrectoDeMotor,
-          id_creador,
-          observacion1,
-          observacion2,
-          observacion3
-        ])
-        res.send({rows});
-        
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+        observacion3
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const [rows] = await pool.query(consulta, [
+        id_grupoProduccion,
+        id_CKBT,
+        id_limpiezaBandaYRodillos,
+        id_lubricacionChumaceras,
+        id_accionamientoCorrectoDeMotor,
+        id_creador,
+        observacion1,
+        observacion2,
+        observacion3,
+      ]);
+      res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
     }
-}
+  } catch (err) {
+    console.error('Error al guardar los datos:', err);
+    res.status(500).send({ error: 'Error al guardar los datos' });
+  }
+};
+
 
 
 

@@ -5,6 +5,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDCKMM = async(req, res)=>{
   const {
+    id_grupoProduccion,
     id_CKMM,
     id_limpiezaGeneral,
     id_AccionamientoCorrectoTornillos,
@@ -26,7 +27,18 @@ export const postDCKMM = async(req, res)=>{
    
     try{
     
-       const consulta=`INSERT INTO dckmm (
+      const camposVacios = [];
+    
+    if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+  
+    if (camposVacios.length > 0) {
+      const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+      console.log(mensaje);
+      res.status(400).send({ error: mensaje });
+    } else {
+
+      const consulta=`INSERT INTO dckmm (
+        id_grupoProduccion,
         id_CKMM,
         id_limpiezaGeneral,
         id_AccionamientoCorrectoTornillos,
@@ -42,8 +54,9 @@ export const postDCKMM = async(req, res)=>{
         observacion4,
         observacion5,
         observacion6,
-        observacion7) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+        observacion7) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
+          id_grupoProduccion,
           id_CKMM,
           id_limpiezaGeneral,
           id_AccionamientoCorrectoTornillos,
@@ -61,11 +74,12 @@ export const postDCKMM = async(req, res)=>{
           observacion6,
           observacion7
         ])
-        res.send({rows});
+        res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
         
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+      
+    }}catch (err) {
+      console.error('Error al guardar los datos:', err);
+      res.status(500).send({ error: 'Error al guardar los datos' });
     }
 }
 

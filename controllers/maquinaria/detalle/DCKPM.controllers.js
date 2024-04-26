@@ -6,6 +6,7 @@ import { pool } from "../../../src/db.js";
 export const postDCKPM = async(req, res)=>{
   const {
     id_CKPM,
+    id_grupoProduccion,
     id_GrupoAnteriorCompletoSatisfactoriamenteLimpiezaGeneral,
     id_AccionamientoCorrectoMotorBomba ,
     id_NivelDeAceiteEnTanqueHidraulicoCorrecto ,
@@ -29,19 +30,18 @@ export const postDCKPM = async(req, res)=>{
    
    
     try{
-    if(id_CKPM===''||
-    id_GrupoAnteriorCompletoSatisfactoriamenteLimpiezaGeneral===''||
-      id_AccionamientoCorrectoMotorBomba ===''||
-      id_NivelDeAceiteEnTanqueHidraulicoCorrecto ===''||
-      id_MangueraHidraulicaEstaEnBuenEstadoSinFugasAceite ===''||
-      id_FuncionamientoCorrectamenteCilindroHidraulicoParaSubirBajar ===''||
-      id_EstructuraPrensaEncuentraSinFisuras ===''||
-      id_EstructuraDeMoldesEncuentraSinFisurasDefectos ===''||
-      id_LimpiezaLubricacionBarrasBujesEquipoAnterior ===''||
-      id_IntegridadBujesBarrasPrincipalesOptimas ){
-
+      const camposVacios = [];
+    
+      if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+    
+      if (camposVacios.length > 0) {
+        const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+        console.log(mensaje);
+        res.status(400).send({ error: mensaje });
+      } else {
         const consulta=`INSERT INTO dckpm (
           id_CKPM,  
+          id_grupoProduccion,
           id_GrupoAnteriorCompletoSatisfactoriamenteLimpiezaGeneral,
     id_AccionamientoCorrectoMotorBomba ,
     id_NivelDeAceiteEnTanqueHidraulicoCorrecto ,
@@ -62,9 +62,10 @@ export const postDCKPM = async(req, res)=>{
     observacion6,
     observacion7,
     observacion8,
-    observacion9) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    observacion9) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
               const [rows]= await pool.query(consulta,[
                 id_CKPM,
+                id_grupoProduccion,
                 id_GrupoAnteriorCompletoSatisfactoriamenteLimpiezaGeneral,
                 id_AccionamientoCorrectoMotorBomba ,
                 id_NivelDeAceiteEnTanqueHidraulicoCorrecto ,
@@ -85,16 +86,16 @@ export const postDCKPM = async(req, res)=>{
                 observacion8,
                 observacion9
               ])
-              res.send({rows});
-      }else{
-        res.status(400).send('Uno o varios datos están vacíos');
-      }
+              res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
 
+      }  
+    
      
         
         
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+    }catch (err) {
+      console.error('Error al guardar los datos:', err);
+      res.status(500).send({ error: 'Error al guardar los datos' });
     }
 }
 

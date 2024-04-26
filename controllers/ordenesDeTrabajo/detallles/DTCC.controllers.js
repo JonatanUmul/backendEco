@@ -6,7 +6,26 @@ export const postDTCC = async(req, res)=>{
     const estado= 2;
     
     const {
-        id_OTCC,horneados, fecha_real ,codigoInicio,codigoFin,id_operarioCC,modelo,turnoCC,fechaHorneado,turnoHorneado,aprobados,altos,bajos,rajadosCC,crudoCC,quemados,ahumados
+        id_OTCC,
+        horneados,
+        fecha_real,
+        codigoInicio,
+        codigoFin,
+        id_operarioCC,
+        id_auditor,
+        modelo,
+        id_horno,
+        turnoCC,
+        fechaHorneado,
+        turnoHorneado,
+        aprobados,
+        altos,
+        bajos,
+        mermas_hornos,
+        rajadosCC,
+        crudoCC,
+        quemados,
+        ahumados
         } = req.body;
     
 
@@ -15,8 +34,48 @@ export const postDTCC = async(req, res)=>{
             console.log('Uno o varios datos estan vacios')
         }
         else{
-            const consulta='INSERT INTO dtcc(id_OTCC,horneados,fecha_real ,codigoInicio,codigoFin,id_operarioCC,modelo,turnoCC,fechaHorneado,turnoHorneado,aprobados,altos,bajos,rajadosCC,crudoCC,quemados,ahumados)Values(?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?,?)';
-        const [rows]= await pool.query(consulta,[id_OTCC,horneados,   fecha_real ,codigoInicio,codigoFin,id_operarioCC,modelo,turnoCC,fechaHorneado,turnoHorneado,aprobados,altos,bajos,rajadosCC,crudoCC,quemados,ahumados])
+            const consulta=`INSERT INTO dtcc(  
+                id_OTCC,
+                horneados,
+                fecha_real,
+                codigoInicio,
+                codigoFin,
+                id_operarioCC,
+                id_auditor,
+                modelo,
+                id_horno,
+                turnoCC,
+                fechaHorneado,
+                turnoHorneado,
+                aprobados,
+                altos,
+                bajos,
+                mermas_hornos,
+                rajadosCC,
+                crudoCC,
+                quemados,
+                ahumados)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?)`;
+        const [rows]= await pool.query(consulta,[  
+            id_OTCC,
+            horneados,
+            fecha_real,
+            codigoInicio,
+            codigoFin,
+            id_operarioCC,
+            id_auditor,
+            modelo,
+            id_horno,
+            turnoCC,
+            fechaHorneado,
+            turnoHorneado,
+            aprobados,
+            altos,
+            bajos,
+            mermas_hornos,
+            rajadosCC,
+            crudoCC,
+            quemados,
+            ahumados])
         res.send({rows});
         }
         
@@ -32,30 +91,33 @@ export const getDTCC = async(req, res)=>{
     const consulta = 
     `SELECT
     d.id_OTCC,
-      d.id,
-      d.fecha_real,
-      d.fecha_creacion,
-      d.codigoInicio,
-      d.codigoFin,
-      d.fechaHorneado,
-      d.aprobados,
-      d.altos,
-      d.bajos,
-      d.rajadosCC,
-      d.crudoCC,
-      d.quemados,
-      d.ahumados,
-      operarios.Nombre AS encargadoCC,
-      ufmodelo.nombre_modelo AS modeloUF,
-      turnoCC.turno AS turnoCC, 
-      turnoHorneado.turno AS turnoHorneado  
-    FROM dtcc d
-    LEFT JOIN operarios ON d.id_operarioCC = operarios.id
-    LEFT JOIN ufmodelo ON d.modelo = ufmodelo.id_mod
-    LEFT JOIN turno AS turnoCC ON d.turnoCC = turnoCC.id  
-    LEFT JOIN turno AS turnoHorneado ON d.turnoHorneado = turnoHorneado.id; 
+    d.id,
+    d.fecha_real,
+    d.fecha_creacion,
+    d.codigoInicio,
+    d.codigoFin,
+    d.fechaHorneado,
+    d.aprobados,
+    d.altos,
+    d.bajos,
+    d.id_horno,
+    d.rajadosCC,
+    d.crudoCC,
+    d.quemados,
+    d.ahumados,
+    operario_encargado.Nombre AS encargadoCC,
+    operario_auditor.Nombre AS Aditor,
+    ufmodelo.nombre_modelo AS modeloUF,
+    turnoCC.turno AS turnoCC, 
+    turnoHorneado.turno AS turnoHorneado  
+FROM dtcc d
+LEFT JOIN operarios AS operario_encargado ON d.id_operarioCC = operario_encargado.id
+LEFT JOIN operarios AS operario_auditor ON d.id_auditor = operario_auditor.id
+LEFT JOIN ufmodelo ON d.modelo = ufmodelo.id_mod
+LEFT JOIN turno AS turnoCC ON d.turnoCC = turnoCC.id  
+LEFT JOIN turno AS turnoHorneado ON d.turnoHorneado = turnoHorneado.id
 
-    where d.id_OTCC = ?`
+where d.id_OTCC = ?`
     const [rows]= await pool.query(consulta, [id])
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });

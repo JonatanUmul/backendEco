@@ -5,6 +5,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDCKCTA = async(req, res)=>{
   const {
+    id_grupoProduccion,
     id_CKCTA,
     id_verificarCableDeCorteEnBuenEstado,
     id_lubricarGuiasDelCortador,
@@ -16,16 +17,29 @@ export const postDCKCTA = async(req, res)=>{
    
    
     try{
-    
+      const camposVacios = [];
+      if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+      if (id_verificarCableDeCorteEnBuenEstado === '') camposVacios.push('Verificar Cable de Corte en Buen Estado');
+      if (id_lubricarGuiasDelCortador === '') camposVacios.push('Lubricar Guias Del Cortador');
+      if (id_limpiezaGeneralDeCorrederasGuiasCortador === '') camposVacios.push(' Limpieza General de Correderas, Guias y Cortador');
+  
+      if (camposVacios.length > 0) {
+        const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+        console.log(mensaje);
+        res.status(400).send({ error: mensaje });
+      } else {
+        
        const consulta=`INSERT INTO dckcta (
+        id_grupoProduccion,
         id_CKCTA,
         id_verificarCableDeCorteEnBuenEstado,
         id_lubricarGuiasDelCortador,
         id_limpiezaGeneralDeCorrederasGuiasCortador,
         observacion1,
         observacion2,
-        observacion3) Values(?,?,?,?,?,?,?)`;
+        observacion3) Values(?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
+          id_grupoProduccion,
           id_CKCTA,
           id_verificarCableDeCorteEnBuenEstado,
           id_lubricarGuiasDelCortador,
@@ -34,7 +48,9 @@ export const postDCKCTA = async(req, res)=>{
           observacion2,
           observacion3
         ])
-        res.send({rows});
+        res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
+      }
+    
         
         
     }catch(err){

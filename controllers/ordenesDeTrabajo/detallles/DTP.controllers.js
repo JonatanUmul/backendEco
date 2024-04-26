@@ -4,22 +4,21 @@ import { pool } from "../../../src/db.js";
 export const postDTP = async (req, res) => {
    
   const {
-    id_OTP,fecha_real, id_turno, id_tipoCernido,id_tipoCernido2,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion} = req.body;
+    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion} = req.body;
 
 
-
+console.log(id_grupoproduccion)
   try {
-    if(id_OTP===''|| id_turno===''|| id_tipoCernido===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='')
+    if(id_OTP===''|| id_turno===''|| id_grupoproduccion===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='')
     { console.log('Uno o varios datos están vacíos');
     return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
   }else{
-      const consulta ="INSERT INTO dtp( id_OTP, fecha_real, id_turno, id_tipoCernido, id_tipoCernido2, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion) VALUES (?, ?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?)";
+      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?)";
       const [rows] = await pool.query(consulta, [
         id_OTP,
         fecha_real,
+        id_grupoproduccion,
     id_turno,
-    id_tipoCernido,
-    id_tipoCernido2,
     id_cernidodetalle,
     id_cernidodetalle2,
     id_Aserradero,
@@ -59,13 +58,19 @@ d.codigoInicio,
 d.codigoFinal,
 d.librasBarro,
 d.librasAserrin,
+d.librasAserrin2,
+COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
 d.fecha_creacion,
+d.fecha_real,
 d.hora_creacion,
 otp.id AS id_OTP,
 turno.turno AS nombre_turno,
-tipocernido.tipoCernido AS nombre_tipoCernido,
-aserradero.nombre_aserradero AS nombre_Aserradero,
-ufmodelo.nombre_modelo AS nombre_ufmodelo
+grupodetrabajo.grupos AS grupoProd,
+ufmodelo.nombre_modelo AS nombre_ufmodelo,
+aserradero.nombre_aserradero AS aserradero1,
+aserradero2.nombre_aserradero AS aserradero2,
+cernidodetalle.detalle AS cernidodetalle,
+cernidodetalle2.detalle AS cernidodetalle2
 FROM 
 dtp d
 LEFT JOIN 
@@ -73,11 +78,17 @@ otp ON d.id_OTP = otp.id
 LEFT JOIN 
 turno ON d.id_turno = turno.id
 LEFT JOIN 
-tipocernido ON d.id_tipoCernido = tipocernido.id
-LEFT JOIN 
 aserradero ON d.id_Aserradero = aserradero.id
 LEFT JOIN 
+aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
+LEFT JOIN
+grupodetrabajo on d.id_grupoproduccion=grupodetrabajo.id
+LEFT JOIN 
 ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
+LEFT JOIN
+cernidodetalle  ON d.id_cernidodetalle=cernidodetalle.id
+LEFT JOIN
+cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
 
     where otp.id=?
 
@@ -95,3 +106,87 @@ ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
 };
 
 
+
+  
+export const getDTFMM = async (req, res) => {
+  const { id_asrdSMP, fecha_creacion_inicio,fecha_creacion_fin } = req.params; // Obtener los parámetros de la URL
+
+  try {
+      let consulta = `
+      
+SELECT 
+d.id,
+d.producido,
+d.codigoInicio,
+d.codigoFinal,
+d.librasBarro,
+d.librasAserrin,
+d.librasAserrin2,
+COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
+d.fecha_creacion,
+d.fecha_real,
+d.hora_creacion,
+otp.id AS id_OTP,
+turno.turno AS nombre_turno,
+grupodetrabajo.grupos AS grupoProd,
+ufmodelo.nombre_modelo AS nombre_ufmodelo,
+aserradero.nombre_aserradero AS aserradero1,
+aserradero2.nombre_aserradero AS aserradero2,
+cernidodetalle.detalle AS cernidodetalle,
+cernidodetalle2.detalle AS cernidodetalle2
+FROM 
+dtp d
+LEFT JOIN 
+otp ON d.id_OTP = otp.id
+LEFT JOIN 
+turno ON d.id_turno = turno.id
+LEFT JOIN 
+aserradero ON d.id_Aserradero = aserradero.id
+LEFT JOIN 
+aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
+LEFT JOIN
+grupodetrabajo on d.id_grupoproduccion=grupodetrabajo.id
+LEFT JOIN 
+ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
+LEFT JOIN
+cernidodetalle  ON d.id_cernidodetalle=cernidodetalle.id
+LEFT JOIN
+cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
+
+  WHERE 1=1`;
+
+      const params = [];
+
+  
+      if (id_asrdSMP !== 'null') {
+          consulta += ' AND (d.id_Aserradero = ? OR d.id_Aserradero2 = ?)';
+          params.push(id_asrdSMP, id_asrdSMP);
+      }
+      
+      // Elimina el bloque 'else' para que no haya condiciones de filtro adicionales cuando no se selecciona nada
+      
+      
+
+     
+      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+          if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+              consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+              params.push(fecha_creacion_inicio, fecha_creacion_fin);
+          } else if (fecha_creacion_inicio !== 'null') {
+              consulta += ' AND d.fecha_creacion >= ?';
+              params.push(fecha_creacion_inicio);
+          } else {
+              consulta += ' AND d.fecha_creacion <= ?';
+              params.push(fecha_creacion_fin);
+          }
+      }
+    
+
+      const [rows] = await pool.query(consulta, params);
+
+      res.status(200).json(rows);
+  } catch (error) {
+      console.error("Error al obtener los datos de la tabla dthp:", error);
+      res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+  }
+};

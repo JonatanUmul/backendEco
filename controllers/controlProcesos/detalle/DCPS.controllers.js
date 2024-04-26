@@ -4,13 +4,13 @@ import { pool } from "../../../src/db.js";
 
 export const postDCPS = async(req, res)=>{
   const {
-    id_DCPS, codigo, id_prensador, id_prensa,id_mod, id_calificacion
+    id_DCPS,id_auditor, codigo, id_prensador, id_prensa,id_mod, id_calificacion
     }= req.body
    
     try{
     
-       const consulta='INSERT INTO dcps(id_DCPS, codigo, id_prensador, id_prensa, id_mod, id_calificacion)Values(?, ?,?,?,?,?)';
-        const [rows]= await pool.query(consulta,[id_DCPS, codigo, id_prensador, id_prensa, id_mod, id_calificacion])
+       const consulta='INSERT INTO dcps(id_DCPS,id_auditor, codigo, id_prensador, id_prensa, id_mod, id_calificacion)Values(?, ?,?,?,?,?,?)';
+        const [rows]= await pool.query(consulta,[id_DCPS,id_auditor, codigo, id_prensador, id_prensa, id_mod, id_calificacion])
         res.send({rows});
         
         

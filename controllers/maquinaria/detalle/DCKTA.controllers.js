@@ -6,6 +6,7 @@ import { pool } from "../../../src/db.js";
 export const postDCKTA = async(req, res)=>{
   const {
     id_CKTA,
+    id_grupoProduccion,
     id_visorFuncionandoNivelDeAguaVisible,
     id_accionamientoCorrectoSelenoideAlimentacion,
     id_accionamientoCorrectoSelenoideLlenado,
@@ -17,29 +18,43 @@ export const postDCKTA = async(req, res)=>{
    
     try{
     
-       const consulta=`INSERT INTO dckta (
-        id_CKTA,
-        id_visorFuncionandoNivelDeAguaVisible,
-        id_accionamientoCorrectoSelenoideAlimentacion,
-        id_accionamientoCorrectoSelenoideLlenado,
-        observacion1,
-        observacion2,
-        observacion3) Values(?,?,?,?,?,?,?)`;
-        const [rows]= await pool.query(consulta,[
-          id_CKTA,
-          id_visorFuncionandoNivelDeAguaVisible,
-          id_accionamientoCorrectoSelenoideAlimentacion,
-          id_accionamientoCorrectoSelenoideLlenado,
-          observacion1,
-          observacion2,
-          observacion3
-        ])
-        res.send({rows});
-        
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+        const camposVacios = [];
+    
+    if (id_grupoProduccion === '') camposVacios.push('Grupo de Producción');
+   
+    if (camposVacios.length > 0) {
+      const mensaje = `Los siguientes campos están vacíos: ${camposVacios.join(', ')}`;
+      console.log(mensaje);
+      res.status(400).send({ error: mensaje });
+    } else {
+        const consulta=`INSERT INTO dckta (
+            id_CKTA,
+            id_grupoProduccion,
+            id_visorFuncionandoNivelDeAguaVisible,
+            id_accionamientoCorrectoSelenoideAlimentacion,
+            id_accionamientoCorrectoSelenoideLlenado,
+            observacion1,
+            observacion2,
+            observacion3) Values(?,?,?,?,?,?,?,?)`;
+            const [rows]= await pool.query(consulta,[
+              id_CKTA,
+              id_grupoProduccion,
+              id_visorFuncionandoNivelDeAguaVisible,
+              id_accionamientoCorrectoSelenoideAlimentacion,
+              id_accionamientoCorrectoSelenoideLlenado,
+              observacion1,
+              observacion2,
+              observacion3
+            ])
+            res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
+            
+          
     }
+        
+    }catch (err) {
+        console.error('Error al guardar los datos:', err);
+        res.status(500).send({ error: 'Error al guardar los datos' });
+      }
 }
 
 

@@ -3,11 +3,11 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDTH = async (req, res) => {
-  const { id_cth, fecha_real,id_turno ,id_modelo, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  } = req.body;
+  const { id_cth, fecha_real,id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  } = req.body;
   
   try {
-    const consulta = 'INSERT INTO dth (id_cth,fecha_real, id_turno ,id_modelo, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?)';
-    const [rows] = await pool.query(consulta, [id_cth,fecha_real, id_turno ,id_modelo, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  ]);
+    const consulta = 'INSERT INTO dth (id_cth,fecha_real, id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?,?)';
+    const [rows] = await pool.query(consulta, [id_cth,fecha_real, id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  ]);
     res.send({ rows });
   } catch (err) {
     console.log('Error al guardar los datos', err);

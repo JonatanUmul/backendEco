@@ -76,7 +76,7 @@
     import DCKPHM from './routes/maquinaria/detallados//DCKPHM.routes.js'
     import DCKPM from './routes/maquinaria/detallados/DCKPM.routes.js'
     import DCKTA from './routes/maquinaria/detallados/DCKTA.routes.js'
-
+import DCPFM from './routes/controlProcesos/detallados/DCFMP.routes.js'
     import MTA from './routes/mantenimientoMaq/encabezados/MTA.routes.js'
     import MEXT from './routes/mantenimientoMaq/encabezados/MEXT.routes.js'
     import MBT from './routes/mantenimientoMaq/encabezados/MBT.routes.js'
@@ -266,6 +266,7 @@ app.use(function(req, res, next) {
     app.use(DRM)
     app.use(DTT)
     app.use(DTH)
+    app.use(DCPFM)
     app.use(DCPCD)
 
 

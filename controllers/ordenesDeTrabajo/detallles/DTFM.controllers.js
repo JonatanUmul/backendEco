@@ -71,7 +71,7 @@ where otfm.id=?
 
   
 export const getDTFMM = async (req, res) => {
-    const { id_asrdSMP, fecha_creacion_inicio,fecha_creacion_fin } = req.params; // Obtener los parámetros de la URL
+    const {fecha_creacion_inicio,fecha_creacion_fin } = req.params; // Obtener los parámetros de la URL
   
     try {
         let consulta = `
@@ -109,18 +109,6 @@ export const getDTFMM = async (req, res) => {
     WHERE 1=1`;
   
         const params = [];
-  
-    
-        if (id_asrdSMP !== 'null') {
-            consulta += ' AND (d.id_Aserradero = ? OR d.id_Aserradero2 = ?)';
-            params.push(id_asrdSMP, id_asrdSMP);
-        }
-        
-        // Elimina el bloque 'else' para que no haya condiciones de filtro adicionales cuando no se selecciona nada
-        
-        
-  
-       
         if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
             if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
                 consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';

@@ -108,29 +108,32 @@ export const getDASERRI = async (req, res) => {
 
       const params = [];
 
-      if (id_patio !== 'null') {
+      if (id_patio !== 'null' && id_patio!=='null' ) {
           consulta += ' AND (d.id_patio IS NULL OR d.id_patio = ?)';
           params.push(id_patio);
       }
 
-      if (id_asrdSMP !== 'null') {
+      if (id_asrdSMP !== 'null'&& id_asrdSMP!=='null' ) {
           consulta += ' AND (d.id_asrdSMP IS NULL OR d.id_asrdSMP = ?)';
           params.push(id_asrdSMP);
       }
 
-       if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-            if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-                consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
-                params.push(fecha_creacion_inicio, fecha_creacion_fin);
-            } else if (fecha_creacion_inicio !== 'null') {
-                consulta += ' AND d.fecha_creacion >= ?';
-                params.push(fecha_creacion_inicio);
-            } else {
-                consulta += ' AND d.fecha_creacion <= ?';
-                params.push(fecha_creacion_fin);
-            }
-        }
-      
+      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+        consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+        params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== 'null') {
+        consulta += ' AND d.fecha_creacion >= ?';
+        params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== 'null') {
+        consulta += ' AND d.fecha_creacion <= ?';
+        params.push(fecha_creacion_fin);
+    }
+    else if (fecha_creacion_inicio !== 'null') {
+      consulta += ' AND d.fecha_creacion = ?';
+      params.push(fecha_creacion_inicio);
+  }
+   
+    
      
 
       const [rows] = await pool.query(consulta, params);

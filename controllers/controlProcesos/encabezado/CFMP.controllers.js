@@ -2,17 +2,15 @@ import { pool } from "../../../src/db.js";
 
 
 
-export const postCTT = async(req, res)=>{
+export const postCFMP = async(req, res)=>{
     const id_est= 2;
-    // const id_creador= 8;
-    const codigoInicio= req.body.codigoInicio;
-    const codigoFinal= req.body.codigoFinal
-    const cantidad=  req.body.cantidad
+
    
+
     try{
     
-       const consulta='INSERT INTO ctt(id_est, codigoInicio, codigoFinal, cantidad)Values(?,?, ?, ?)';
-        const [rows]= await pool.query(consulta,[id_est, codigoInicio, codigoFinal, cantidad])
+       const consulta='INSERT INTO cfmp(id_est)Values(?)';
+        const [rows]= await pool.query(consulta,[id_est])
         res.send({rows});
         
         
@@ -22,7 +20,8 @@ export const postCTT = async(req, res)=>{
 }
 
 
-export const putCTT = async (req, res) => {
+
+export const putCFMP = async (req, res) => {
     const estado = req.body.id_est;
     const id = req.body.id;
     const fechaCierre = new Date().toISOString().split('T')[0]; // Fecha actual del sistema en formato: YYYY-MM-DD
@@ -32,7 +31,7 @@ export const putCTT = async (req, res) => {
         if (estado === '' || id === '') {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'UPDATE ctt SET id_est = ?, fechaCierre = ?, horaCierre = ? WHERE id = ?';
+            const consulta = 'UPDATE cpb SET id_est = ?, fechaCierre = ?, horaCierre = ? WHERE id = ?';
             const [rows] = await pool.query(consulta, [estado, fechaCierre, horaCierre, id]);
             res.send({ rows });
         }

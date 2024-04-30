@@ -39,11 +39,13 @@
     import maquinaria from './routes/mantenimientos/maquinaria/Maquinaria.routes.js'
     import Estadouf from './routes/mantenimientos/estadosUF/EstadosUF.routes.js'
     import Operarios from './routes/mantenimientos/operarios/OperariosAreas.routes.js'
+    import DCPCD from './routes/controlProcesos/detallados/DCPCD.routes.js'
     import DTHH from './routes/ordenesDeTrabajo/detallados/DTHH.routes.js'
     import CPS from './routes/controlProcesos/encabezados/CPS.routes.js'
     import CPB from './routes/controlProcesos/encabezados/CPB.routes.js'
     import CRM from './routes/controlProcesos/encabezados/CRM.routes.js'
     import CTT from './routes/controlProcesos/encabezados/CTT.routes.js'
+    import CPCD from './routes/controlProcesos/encabezados/CPCD.routes.js' 
     import CTH from './routes/controlProcesos/encabezados/CTH.routes.js'
     import calificacion from './routes/mantenimientos/calificacion/calificacion.js'
     import DCPS from './routes/controlProcesos/detallados/DCPS.routes.js'
@@ -103,6 +105,7 @@
     import  OTCC from './routes/ordenesDeTrabajo/encabezados/OTCC.routes.js'
     import DTCC from './routes/ordenesDeTrabajo/detallados/DTCC.routes.js'
     import dotenv from 'dotenv';
+    import CFMP from './routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
 // Carga las variables de entorno desde el archivo .env
@@ -231,7 +234,8 @@ app.use(function(req, res, next) {
     //OT Producción
     app.use(OTP)
     app.use(DTP)
-
+    
+    
     //Detalle Toma de Humedad Y OT Humedad en Patios
     app.use(DTHP)
     app.use(OTHP)
@@ -254,12 +258,15 @@ app.use(function(req, res, next) {
     app.use(CRM)
     app.use(CTT)
     app.use(CTH)
+    app.use(CPCD)
+    app.use(CFMP)
     //Detalles Control Procesos
     app.use(DCPS)
     app.use(DCPB)
     app.use(DRM)
     app.use(DTT)
     app.use(DTH)
+    app.use(DCPCD)
 
 
     //Encabezados Maquinaria

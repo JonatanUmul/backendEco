@@ -32,6 +32,18 @@ export const getTablaCP = async (req, res) => {
         SELECT 'cth' AS encabezado, 'Temperatura hornos' AS EncName, COALESCE(NULL, '-') AS codigoInicio, COALESCE(NULL, '-') AS codigoFinal,  id, fecha_creacion, id_creador
         FROM cth 
         WHERE id_est = 2
+
+        union all 
+
+        SELECT 'cpcd' AS encabezado, 'Calidad Producción Crudos' AS EncName, COALESCE(NULL, '-') AS codigoInicio, COALESCE(NULL, '-') AS codigoFinal,  id, fecha_creacion, id_creador
+        FROM cpcd 
+        WHERE id_est = 2
+
+        union all 
+
+        SELECT 'cfmp' AS encabezado, 'Control Formulacion Producciòn' AS EncName, COALESCE(NULL, '-') AS codigoInicio, COALESCE(NULL, '-') AS codigoFinal,  id, fecha_creacion, id_creador
+        FROM cfmp 
+        WHERE id_est = 2
         `;
 
         const [rows] = await pool.query(consulta);

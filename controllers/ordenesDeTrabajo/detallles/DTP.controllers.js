@@ -107,86 +107,85 @@ cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
 
 
 
+export const getDTPPS = async (req, res) => {
+  const { id_ufmodelo,id_grupoproduccion} = req.params;
   
-export const getDTFMM = async (req, res) => {
-  const { id_asrdSMP, fecha_creacion_inicio,fecha_creacion_fin } = req.params; // Obtener los parámetros de la URL
-
   try {
-      let consulta = `
+    let consulta = `
+      SELECT 
+        d.id,
+        d.producido,
+        d.codigoInicio,
+        d.codigoFinal,
+        d.librasBarro,
+        d.librasAserrin,
+        d.librasAserrin2,
+        COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
+        d.fecha_creacion,
+        d.fecha_real,
+        d.hora_creacion,
+        otp.id AS id_OTP,
+        turno.turno AS nombre_turno,
+        grupodetrabajo.grupos AS grupoProd,
+        ufmodelo.nombre_modelo AS nombre_ufmodelo,
+        aserradero.nombre_aserradero AS aserradero1,
+        aserradero2.nombre_aserradero AS aserradero2,
+        cernidodetalle.detalle AS cernidodetalle,
+        cernidodetalle2.detalle AS cernidodetalle2
+      FROM 
+        dtp d
+      LEFT JOIN 
+        otp ON d.id_OTP = otp.id
+      LEFT JOIN 
+        turno ON d.id_turno = turno.id
+      LEFT JOIN 
+        aserradero ON d.id_Aserradero = aserradero.id
+      LEFT JOIN 
+        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
+      LEFT JOIN
+        grupodetrabajo on d.id_grupoproduccion=grupodetrabajo.id
+      LEFT JOIN 
+        ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
+      LEFT JOIN
+        cernidodetalle  ON d.id_cernidodetalle=cernidodetalle.id
+      LEFT JOIN
+        cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
       
-SELECT 
-d.id,
-d.producido,
-d.codigoInicio,
-d.codigoFinal,
-d.librasBarro,
-d.librasAserrin,
-d.librasAserrin2,
-COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
-d.fecha_creacion,
-d.fecha_real,
-d.hora_creacion,
-otp.id AS id_OTP,
-turno.turno AS nombre_turno,
-grupodetrabajo.grupos AS grupoProd,
-ufmodelo.nombre_modelo AS nombre_ufmodelo,
-aserradero.nombre_aserradero AS aserradero1,
-aserradero2.nombre_aserradero AS aserradero2,
-cernidodetalle.detalle AS cernidodetalle,
-cernidodetalle2.detalle AS cernidodetalle2
-FROM 
-dtp d
-LEFT JOIN 
-otp ON d.id_OTP = otp.id
-LEFT JOIN 
-turno ON d.id_turno = turno.id
-LEFT JOIN 
-aserradero ON d.id_Aserradero = aserradero.id
-LEFT JOIN 
-aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
-LEFT JOIN
-grupodetrabajo on d.id_grupoproduccion=grupodetrabajo.id
-LEFT JOIN 
-ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
-LEFT JOIN
-cernidodetalle  ON d.id_cernidodetalle=cernidodetalle.id
-LEFT JOIN
-cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
+        WHERE 1=1`;
 
-  WHERE 1=1`;
-
-      const params = [];
-
+    const params = [];
   
-      if (id_asrdSMP !== 'null') {
-          consulta += ' AND (d.id_Aserradero = ? OR d.id_Aserradero2 = ?)';
-          params.push(id_asrdSMP, id_asrdSMP);
-      }
-      
-      // Elimina el bloque 'else' para que no haya condiciones de filtro adicionales cuando no se selecciona nada
-      
-      
+    if ( id_ufmodelo !== 'null') {
+      consulta += ' AND (d.id_ufmodelo IS NULL OR d.id_ufmodelo = ?)';
+      params.push(id_ufmodelo);
+    }
 
-     
-      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-          if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-              consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
-              params.push(fecha_creacion_inicio, fecha_creacion_fin);
-          } else if (fecha_creacion_inicio !== 'null') {
-              consulta += ' AND d.fecha_creacion >= ?';
-              params.push(fecha_creacion_inicio);
-          } else {
-              consulta += ' AND d.fecha_creacion <= ?';
-              params.push(fecha_creacion_fin);
-          }
-      }
+    if ( id_grupoproduccion !== 'null') {
+      consulta += ' AND (d.id_grupoproduccion IS NULL OR d.id_grupoproduccion = ?)';
+      params.push(id_grupoproduccion);
+    }
+
+//     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+//       consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+//       params.push(fecha_creacion_inicio, fecha_creacion_fin);
+//     } else if (fecha_creacion_inicio !== 'null') {
+//       consulta += ' AND d.fecha_creacion >= ?';
+//       params.push(fecha_creacion_inicio);
+//     } else if (fecha_creacion_fin !== 'null') {
+//       consulta += ' AND d.fecha_creacion <= ?';
+//       params.push(fecha_creacion_fin);
     
+//   }
+//   else if (fecha_creacion_inicio !== 'null') {
+//     consulta += ' AND d.fecha_creacion = ?';
+//     params.push(fecha_creacion_inicio);
+// }
+ 
+    const [rows] = await pool.query(consulta, params);
 
-      const [rows] = await pool.query(consulta, params);
-
-      res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (error) {
-      console.error("Error al obtener los datos de la tabla dthp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+    console.error("Error al obtener los datos de la tabla dthp:", error);
+    res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
   }
 };

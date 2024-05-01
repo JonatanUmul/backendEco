@@ -20,31 +20,36 @@ const id= req.params.id;
 
 try {
   const consulta= `
-  select 
-d.id,
-d.fecha_creacion,
-d.hora_creacion,
-d.cabezaDerecha1,
-d.pieDerecho1,
-d.cabezaDerecha2,
-d.pieDerecho2,
-d.cabezaDerecha3,
-d.pieIzquierdo1,
-d.cabezaizquierda1,
-d.pieIzquierdo2,
-ROUND(((d.cabezaDerecha1+d.pieDerecho1+d.cabezaDerecha2+d.pieDerecho2+d.cabezaDerecha3+d.pieIzquierdo1+d.cabezaizquierda1+d.pieIzquierdo2) / 8)) AS promedio,
-ctt.id as id_ctt,
-ufmodelo.nombre_modelo as modelo,
-ufmodelo2.nombre_modelo as modelo2,
-enc_maq.nombre_maq as tunel 
-
-from dtt d
-
-left join ctt on d.id_CTT= ctt.id
-left join ufmodelo on d.id_modelo= ufmodelo.id_mod
-left join ufmodelo as ufmodelo2 on d.id_modelo= ufmodelo2.id_mod
-left join enc_maq on d.id_tunel= enc_maq.id_maq
-
+  SELECT 
+    d.id,
+    d.fecha_creacion,
+    d.hora_creacion,
+    d.cabezaDerecha1,
+    d.pieDerecho1,
+    d.cabezaDerecha2,
+    d.pieDerecho2,
+    d.cabezaDerecha3,
+    d.pieIzquierdo1,
+    d.cabezaizquierda1,
+    d.pieIzquierdo2,
+    ROUND((
+        d.cabezaDerecha1 + d.pieDerecho1 + d.cabezaDerecha2 + d.pieDerecho2 + 
+        d.cabezaDerecha3 + d.pieIzquierdo1 + d.cabezaizquierda1 + d.pieIzquierdo2
+    ) / 8) AS promedio,
+    ctt.id AS id_ctt,
+    ufmodelo.nombre_modelo AS modelo,
+    ufmodelo2.nombre_modelo AS modelo2,
+    enc_maq.nombre_maq AS tunel 
+FROM 
+    dtt d
+LEFT JOIN 
+    ctt ON d.id_CTT = ctt.id
+LEFT JOIN 
+    ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN 
+    ufmodelo AS ufmodelo2 ON d.id_modelo2 = ufmodelo2.id_mod
+LEFT JOIN 
+    enc_maq ON d.id_tunel = enc_maq.id_maq
 where d.id_CTT=?
 `
 

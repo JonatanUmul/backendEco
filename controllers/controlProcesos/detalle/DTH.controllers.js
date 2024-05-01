@@ -37,6 +37,12 @@ try {
     cth.id AS id_cth,
     ufmodelo.nombre_modelo AS modelo,
     enc_maq.nombre_maq AS horno,
+    IF(
+      TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+      'Día',
+      'Noche'
+  ) AS turnos,
+  turno.turno AS turnos
     turno.turno AS turno 
 FROM 
     dth d
@@ -71,6 +77,12 @@ export const getSDTH= async (req, res)=>{
     d.fecha_real,
     d.fecha_creacion,
     d.hora_creacion,
+    IF(
+      TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+      'Día',
+      'Noche'
+  ) AS turnos,
+  turno.turno AS turnos
     d.tempCabezaIZ,
     d.tempCentroIZ,
     d.tempPieIZ,

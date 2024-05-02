@@ -44,30 +44,24 @@ const id= req.params.id;
 
 try {
   const consulta= `
-  select 
-  d.id,
-  d.pulido,
-  d.fecha_creacion,
+  SELECT 
+  d.fecha_produccion,
   d.hora_creacion,
-  d.fechaProduccion,
-  cpb.id as id_cpb,
-  ufmodelo.nombre_modelo as modelo,
-  operarios.Nombre as pulidor,
-  enc_maq.nombre_maq as prensa,
-  modulostarimas.modulo as modulo,
-  calificaciones.calificacion as calificacion
+  d.barroLB,
+  d.aserrinLB,
+  d.humedadBarro,
+  d.humedadAserrin,
+  d.id_aserradero,
+  aserradero.nombre_aserradero AS aserradero,
+  turno.turno AS turnoProduccion,
+  operarios.Nombre AS formulador
   
-  from 
-    dcpb d
-      
-  left JOIN cpb on d.id_cpb= cpb.id
-  left JOIN ufmodelo on d.id_modelo= ufmodelo.id_mod
-  left join operarios on d.id_pulidor= operarios.id
-  left join enc_maq on d.id_prensa= enc_maq.id_maq
-  left join modulostarimas on d.id_modulo= modulostarimas.id
-  left join calificaciones on d.id_calificacion= calificaciones.id
+  FROM dcfmp d
   
-  where d.id_cpb=?
+  LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
+  LEFT JOIN turno ON d.id_turno= turno.id
+  LEFT JOIN operarios ON d.id_formulador = operarios.id
+  where d.id_cfmp=?
   `
   const [rows]= await pool.query(consulta, [id])
   res.status(200).json({ data: rows });

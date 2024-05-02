@@ -69,8 +69,8 @@ try {
 
 
 export const getDCPBB= async(req, res)=>{
-  const {  modeloUF, pulidor, fecha_creacion_inicio, fecha_creacion_fin } = req.params; 
-  console.log(fecha_creacion_inicio,fecha_creacion_fin)
+  const {  ufmodelo, id_pulidor, fecha_creacion_inicio, fecha_creacion_fin } = req.params; 
+  console.log(fecha_creacion_inicio,fecha_creacion_fin,  ufmodelo, id_pulidor)
   try {
     let consulta= `
     select 
@@ -100,13 +100,13 @@ export const getDCPBB= async(req, res)=>{
   
         const params = [];
   
-        if (modeloUF !== 'null') {
+        if (ufmodelo !== 'null' ) {
             consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
-            params.push(modeloUF);
+            params.push(ufmodelo);
         }
-        if (pulidor !== 'null') {
+        if (id_pulidor !== 'null' ) {
           consulta += ' AND (d.id_pulidor IS NULL OR d.id_pulidor = ?)';
-          params.push(pulidor);
+          params.push(id_pulidor);
       }
      
   

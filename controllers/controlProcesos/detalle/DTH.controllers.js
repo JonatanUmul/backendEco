@@ -41,9 +41,8 @@ try {
       TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
       'Día',
       'Noche'
-  ) AS turnos,
+  ) AS turnos1,
   turno.turno AS turnos
-    turno.turno AS turno 
 FROM 
     dth d
 LEFT JOIN 
@@ -54,6 +53,8 @@ LEFT JOIN
     enc_maq ON d.id_horno = enc_maq.id_maq
 LEFT JOIN 
     turno ON d.id_turno = turno.id
+
+
 where d.id_cth=?
 `
 

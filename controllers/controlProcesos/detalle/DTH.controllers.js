@@ -69,56 +69,71 @@ where d.id_cth=?
 }
 
 export const getSDTH= async (req, res)=>{
-  const {fecha_creacion, id_horno, id_turno}= req.params;
-  
+  const {modeloUF, turn, horno, fecha_creacion_inicio, fecha_creacion_fin}= req.params;
+
   try {
     const consulta= `
-    select 
-    d.id,
-    d.fecha_real,
-    d.fecha_creacion,
-    d.hora_creacion,
-    IF(
-      TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
-      'Día',
-      'Noche'
-  ) AS turnos,
-  turno.turno AS turnos
-    d.tempCabezaIZ,
-    d.tempCentroIZ,
-    d.tempPieIZ,
-    d.tempCabezaDR,
-    d.tempCentroDR,
-    d.tempPieDR,
-    ROUND(((d.tempCabezaIZ + d.tempCabezaIZ + d.tempCentroIZ + d.tempPieIZ + d.tempCabezaDR + tempCentroDR + d.tempPieDR) / 6), 0) AS promedio,
-    cth.id as id_cth,
-    ufmodelo.nombre_modelo as modelo,
-    enc_maq.nombre_maq as horno ,
-    turno.turno as turno 
-    
-    from dth d
-    
-    left join cth on d.id_cth= cth.id
-    left join ufmodelo on d.id_modelo= ufmodelo.id_mod
-    left join enc_maq on d.id_horno= enc_maq.id_maq
-    left join turno on d.id_turno= turno.id
+   
+ select 
+ 'dth' as tabla,
+ d.id,
+ d.fecha_real,
+ d.fecha_creacion,
+ d.hora_creacion,
+ IF(
+   TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+   'Día',
+   'Noche'
+) AS turnos1,
+turno.turno AS turnos,
+ d.tempCabezaIZ,
+ d.tempCentroIZ,
+ d.tempPieIZ,
+ d.tempCabezaDR,
+ d.tempCentroDR,
+ d.tempPieDR,
+ ROUND(((d.tempCabezaIZ + d.tempCabezaIZ + d.tempCentroIZ + d.tempPieIZ + d.tempCabezaDR + tempCentroDR + d.tempPieDR) / 6), 0) AS promedio,
+ cth.id as id_cth,
+ ufmodelo.nombre_modelo as modelo,
+ enc_maq.nombre_maq as horno 
+
+ 
+ from dth d
+ 
+ left join cth on d.id_cth= cth.id
+ left join ufmodelo on d.id_modelo= ufmodelo.id_mod
+ left join enc_maq on d.id_horno= enc_maq.id_maq
+ left join turno on d.id_turno= turno.id
+
     WHERE 1 = 1`;
 
     const params = [];
 
-    if (id_horno !== 'null') {
-        consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
-        params.push(id_horno);
-    }
-    if (fecha_creacion !== 'null') {
-      consulta += ' AND (d.fecha_creacion IS NULL OR d.fecha_creacion = ?)';
-      params.push(fecha_creacion);
-  }
-  if (id_turno !== 'null') {
-    consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
-    params.push(id_turno);
+    
+  if (modeloUF !== 'null') {
+    consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
+    params.push(modeloUF);
 }
-  
+if (turn !== 'null') {
+  consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
+  params.push(turn);
+}
+if (horno !== 'null') {
+  consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
+  params.push(horno);
+}
+ if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+      consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+      params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== 'null') {
+      consulta += ' AND d.fecha_creacion >= ?';
+      params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== 'null') {
+      consulta += ' AND d.fecha_creacion <= ?';
+      params.push(fecha_creacion_fin);
+    }
+
+
     const [rows]= await pool.query(consulta, [id])
     res.status(200).json({ data: rows });
   

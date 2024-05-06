@@ -62,3 +62,102 @@ where d.id_CTT=?
     }
     
 }
+
+export const getDTTT= async (req, res)=>{
+  const {id,fecha_creacion_inicio, fecha_creacion_fin, ufmodelo, turnoProd, tunelNum} = req.params;
+  console.log(fecha_creacion_inicio, fecha_creacion_fin, ufmodelo, turnoProd, tunelNum);
+  try {
+    let consulta = `
+    SELECT 
+    d.id_CTT,
+      d.cabezaDerecha1,
+      d.pieDerecho1,
+      d.cabezaDerecha2,
+      d.pieDerecho2,
+      d.cabezaDerecha3,
+      d.pieIzquierdo1,
+      d.cabezaizquierda1,
+      d.pieIzquierdo2,
+      ROUND((
+        d.cabezaDerecha1 + d.pieDerecho1 + d.cabezaDerecha2 + d.pieDerecho2 + 
+        d.cabezaDerecha3 + d.pieIzquierdo1 + d.cabezaizquierda1 + d.pieIzquierdo2
+    ) / 8) AS promedio,
+      d.fecha_creacion,
+      d.hora_creacion,
+      IF(
+        TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+        'Día',
+        IF(
+            TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59',
+            'Noche',
+            IF(
+                TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:0',
+                'Noche',
+                NULL
+            )
+        )
+    ) AS turnos,
+      ufmodelo.nombre_modelo AS modelo1,
+      ufmodelo2.nombre_modelo AS modelo2,
+      enc_maq.nombre_maq AS tunel,
+      estadouf.estado AS estadouf
+
+    
+
+    FROM dtt d
+    LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+    LEFT JOIN ufmodelo AS ufmodelo2 ON d.id_modelo2 = ufmodelo2.id_mod
+    LEFT JOIN enc_maq ON d.id_tunel = enc_maq.id_maq
+    LEFT JOIN estadouf ON d.id_estadouf = estadouf.id
+   
+    WHERE 1 = 1`;
+
+    const params = [];
+
+
+    if (id !== 'null') {
+      consulta += ' AND (d.id_CTT IS NULL OR d.id_CTT = ?)';
+      params.push(id);
+    }
+
+    if (ufmodelo !== 'null') {
+      consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
+      params.push(ufmodelo);
+    }
+
+    if (turnoProd !== 'null') {
+      consulta += `
+        AND (
+          TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00' AND ? = 'Día'
+          OR
+          TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59' AND ? = 'Noche'
+          OR
+          TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:0' AND ? = 'Noche'
+        )`;
+      params.push(turnoProd, turnoProd, turnoProd);
+    }
+
+    if (tunelNum !== 'null') {
+      consulta += ' AND (d.id_tunel IS NULL OR d.id_tunel = ?)';
+      params.push(tunelNum);
+    }
+
+    // if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+    //   consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+    //   params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    // } else if (fecha_creacion_inicio !== 'null') {
+    //   consulta += ' AND d.fecha_creacion >= ?';
+    //   params.push(fecha_creacion_inicio);
+    // } else if (fecha_creacion_fin !== 'null') {
+    //   consulta += ' AND d.fecha_creacion <= ?';
+    //   params.push(fecha_creacion_fin);
+    // }
+
+    const [rows] = await pool.query(consulta, params);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dthp:", error);
+    res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+  }
+};

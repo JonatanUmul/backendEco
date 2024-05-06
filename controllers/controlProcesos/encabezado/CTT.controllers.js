@@ -40,3 +40,61 @@ export const putCTT = async (req, res) => {
         console.log('Error al guardar los datos', err);
     }
 };
+
+export const getCTT = async (req, res) => {
+    const { fecha_creacion_inicio, fecha_creacion_fin } = req.params;
+    console.log(fecha_creacion_inicio, fecha_creacion_fin);
+    try {
+        let consulta = `
+        select 
+        'ctt' AS tabla,
+        d.id,
+        d.fecha_creacion,
+        d.hora_creacion,
+        IF(
+            TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+            'Día',
+            IF(
+                TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59',
+                'Noche',
+                IF(
+                    TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:0',
+                    'Noche',
+                    NULL
+                )
+            )
+        ) AS turnos,
+        d.fechaCierre,
+        d.horaCierre,
+        d.codigoInicio,
+        d.codigoFinal,
+        d.cantidad,
+        est_proc.estado AS estadoOrden
+        
+        FROM ctt d
+        
+        LEFT JOIN est_proc ON d.id_est =est_proc.id_est
+        
+        
+        WHERE 1=1`;
+
+        const params = [];
+
+        if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+            consulta += ' AND d.fecha_creacion BETWEEN ? AND ?';
+            params.push(fecha_creacion_inicio, fecha_creacion_fin);
+        } else if (fecha_creacion_inicio !== 'null') {
+            consulta += ' AND d.fecha_creacion >= ?';
+            params.push(fecha_creacion_inicio);
+        } else if (fecha_creacion_fin !== 'null') {
+            consulta += ' AND d.fecha_creacion <= ?';
+            params.push(fecha_creacion_fin);
+        }
+
+        const [rows] = await pool.query(consulta, params);
+        res.send(rows);
+    } catch (err) {
+        console.log('Error al obtener los datos:', err);
+        res.status(500).json({ error: 'Error al obtener los datos' });
+    }
+};

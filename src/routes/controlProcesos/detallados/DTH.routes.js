@@ -8,6 +8,6 @@ const router = Router();
 
 router.post('/DTH', postDTH);
 router.get('/DTH/:id', getDTH);
-router.get('/DTH/:fecha_creacion/:id_asrd/:id_horno', getSDTH);
+router.get('/DTH/fecha_creacion_inicio/:fecha_creacion_fin/:modeloUF/:turn/:horno', getSDTH);
 
 export default router;

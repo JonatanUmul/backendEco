@@ -18,7 +18,7 @@ export const postDTH = async (req, res) => {
 
 
 export const getDTH= async (req, res)=>{
-const id= req.params.id;
+let id= req.params.id;
 
 try {
   const consulta= `
@@ -69,14 +69,15 @@ where d.id_cth=?
 }
 
 export const getSDTH= async (req, res)=>{
-  const {modeloUF, turn, horno, fecha_creacion_inicio, fecha_creacion_fin}= req.params;
-
+  const {fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno}= req.params;
+console.log('fechas',fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno)
   try {
-    const consulta= `
+    let consulta= `
    
  select 
  'dth' as tabla,
  d.id,
+ d.id_turno,
  d.fecha_real,
  d.fecha_creacion,
  d.hora_creacion,
@@ -112,16 +113,17 @@ turno.turno AS turnos,
     
   if (modeloUF !== 'null') {
     consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
-    params.push(modeloUF);
-}
+    params.push(modeloUF)}
+
+if (horno !== 'null') {
+  consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
+  params.push(horno)}
+
 if (turn !== 'null') {
   consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
   params.push(turn);
 }
-if (horno !== 'null') {
-  consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
-  params.push(horno);
-}
+
  if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
       consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
       params.push(fecha_creacion_inicio, fecha_creacion_fin);
@@ -134,12 +136,12 @@ if (horno !== 'null') {
     }
 
 
-    const [rows]= await pool.query(consulta, [id])
+    const [rows] = await pool.query(consulta, params);
     res.status(200).json({ data: rows });
   
       } catch (error) {
-          console.error("Error al obtener los datos de la tabla dtp:", error);
-        res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
+          console.error("Error al obtener los datos de la tabla dth:", error);
+        res.status(500).json({ error: "Error al obtener los datos de la tabla dth" });
       }
       
   }

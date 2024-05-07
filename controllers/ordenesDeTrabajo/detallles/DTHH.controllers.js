@@ -75,3 +75,91 @@ LEFT JOIN
     }
     
 }
+
+
+
+
+export const getSSDTH = async(req, res)=>{
+
+    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno}= req.params
+
+    try {
+    let consulta = 
+    `SELECT 
+    'cthh' as tabla,
+    d.id,
+    d.id_modelo,
+    d.id_turno,
+    d.id_horno,
+    d.codigoInicio,
+    d.CodigoFin,
+    d.horneado,
+    d.mermasCrudas,
+    d.librasBarro,
+    d.librasAserrin,
+    d.fecha_creacion,
+    othh.id AS id_othh,
+    turno.turno AS turno,
+    aserradero.nombre_aserradero AS aserradero,
+    tipocernido.tipoCernido AS tipocernido,
+    ufmodelo.nombre_modelo as ufmodelo,
+    enc_maq.nombre_maq as enc_maq,
+    operarios.Nombre as operarios
+    
+FROM 
+    dthh d
+LEFT JOIN 
+    othh ON d.id_OTHH = othh.id
+LEFT JOIN 
+    turno ON d.id_turno = turno.id
+LEFT JOIN 
+    aserradero ON d.id_aserradero = aserradero.id
+LEFT JOIN 
+    tipocernido ON d.id_cernidodetalle= tipocernido.id
+LEFT JOIN
+	ufmodelo on d.id_modelo= ufmodelo.id_mod
+LEFT JOIN
+	enc_maq on d.id_horno= enc_maq.id_maq
+LEFT JOIN
+	operarios on id_hornero = operarios.id
+    
+    WHERE 1= 1`;
+    
+    const params=[]
+
+ 
+    if (modeloUF !== 'null') {
+        consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
+        params.push(modeloUF)}
+    
+    if (horno !== 'null') {
+      consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
+      params.push(horno)}
+    
+    if (turn !== 'null') {
+      consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
+      params.push(turn);
+    }
+    
+     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+          consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+          params.push(fecha_creacion_inicio, fecha_creacion_fin);
+        } else if (fecha_creacion_inicio !== 'null') {
+          consulta += ' AND d.fecha_creacion >= ?';
+          params.push(fecha_creacion_inicio);
+        } else if (fecha_creacion_fin !== 'null') {
+          consulta += ' AND d.fecha_creacion <= ?';
+          params.push(fecha_creacion_fin);
+        }
+    
+
+    const [rows]= await pool.query(consulta, params)
+    // Enviar los datos obtenidos al cliente
+    res.status(200).json({ data: rows });
+
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla dtp:", error);
+      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
+    }
+    
+}

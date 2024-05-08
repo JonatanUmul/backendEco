@@ -85,12 +85,12 @@ export const getSSDTH = async(req, res)=>{
 
     try {
     let consulta = 
-    `SELECT 
+    `  SELECT 
     'cthh' as tabla,
     d.id,
     d.id_modelo,
     d.id_turno,
-    d.id_horno,
+    d.id_horno as 'numeroHorno',
     d.codigoInicio,
     d.CodigoFin,
     d.horneado,
@@ -104,8 +104,18 @@ export const getSSDTH = async(req, res)=>{
     tipocernido.tipoCernido AS tipocernido,
     ufmodelo.nombre_modelo as ufmodelo,
     enc_maq.nombre_maq as enc_maq,
-    operarios.Nombre as operarios
+    operarios.Nombre as operarios,
+    dtcc.aprobados,
+    dtcc.modelo,
+    dtcc.id_horno,
+    dtcc.turnoHorneado,
+    dtcc.fechaHorneado,
+    dtcc.altos,
+    dtcc.bajos,
+    dtcc.rajadosCC,
+    dtcc.crudoCC,
     
+    ROUND(( (dtcc.aprobados/d.horneado)*100)) AS porcentaje
 FROM 
     dthh d
 LEFT JOIN 
@@ -117,12 +127,14 @@ LEFT JOIN
 LEFT JOIN 
     tipocernido ON d.id_cernidodetalle= tipocernido.id
 LEFT JOIN
-	ufmodelo on d.id_modelo= ufmodelo.id_mod
+    ufmodelo on d.id_modelo= ufmodelo.id_mod
 LEFT JOIN
-	enc_maq on d.id_horno= enc_maq.id_maq
+    enc_maq on d.id_horno= enc_maq.id_maq
 LEFT JOIN
-	operarios on id_hornero = operarios.id
-    
+    operarios on id_hornero = operarios.id
+LEFT JOIN dtcc ON  dtcc.fechaHorneado = d.fecha_creacion AND dtcc.modelo = d.id_modelo AND dtcc.id_horno = d.id_horno AND dtcc.turnoHorneado = d.id_turno
+
+
     WHERE 1= 1`;
     
     const params=[]

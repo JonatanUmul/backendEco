@@ -2,14 +2,15 @@ import { pool } from "../../../src/db.js";
 
 export const postDTFM = async (req, res) => {
 
-    const { id_OTFM, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim} = req.body;
-    console.log(id_OTFM)
+    const { id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim} = req.body;
+    console.log(id_modelo)
+
     try {
         if (id_OTFM === '' || id_Aserradero === '' || cantidad === '' || peso === '' || humedad === '') {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtfm(id_OTFM, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?,?,?)';
-            const [rows] = await pool.query(consulta, [id_OTFM, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim]);
+            const consulta = 'INSERT INTO dtfm(id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?,?,?,?)';
+            const [rows] = await pool.query(consulta, [id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim]);
             res.send({ rows });
         }
     } catch (err) {
@@ -39,7 +40,8 @@ export const getDTFM = async (req, res) => {
       aserradero.nombre_aserradero AS aserradero,
       cernidodetalle.detalle AS detallecernido1,
       aserradero2.nombre_aserradero AS aserradero2,
-      cernidodetalle2.detalle AS detallecernido2
+      cernidodetalle2.detalle AS detallecernido2,
+      ufmodelo.nombre_modelo AS modelo
   FROM 
       dtfm d
   LEFT JOIN
@@ -51,10 +53,12 @@ export const getDTFM = async (req, res) => {
   LEFT JOIN
       cernidodetalle AS cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
   LEFT JOIN
-      aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  -- Corrige este JOIN
+      aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  
   LEFT JOIN
       cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
-  
+  LEFT JOIN 
+      ufmodelo ON d.id_modelo=ufmodelo.id_mod
+
 where otfm.id=?
   `;
       const [rows] = await pool.query(consulta, [id]);
@@ -80,7 +84,6 @@ export const getDTFMM = async (req, res) => {
         d.cantidad,
         d.peso, 
          d.peso2,  
-         COALESCE(d.peso, 0) + COALESCE(d.peso2, 0) as pesototal,
         d.humedad,
         d.humedad2,
         d.fecha_creacion,
@@ -90,7 +93,8 @@ export const getDTFMM = async (req, res) => {
         aserradero.nombre_aserradero AS aserradero,
         cernidodetalle.detalle AS detallecernido1,
         aserradero2.nombre_aserradero AS aserradero2,
-        cernidodetalle2.detalle AS detallecernido2
+        cernidodetalle2.detalle AS detallecernido2,
+        ufmodelo.nombre_modelo AS modelo
     FROM 
         dtfm d
     LEFT JOIN
@@ -102,10 +106,12 @@ export const getDTFMM = async (req, res) => {
     LEFT JOIN
         cernidodetalle AS cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
     LEFT JOIN
-        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  -- Corrige este JOIN
+        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  
     LEFT JOIN
         cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
-    
+    LEFT JOIN 
+        ufmodelo ON d.id_modelo=ufmodelo.id_mod
+  
     WHERE 1=1`;
   
         const params = [];

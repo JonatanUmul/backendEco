@@ -108,8 +108,8 @@ cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
 
 
 export const getDTPPS = async (req, res) => {
-  const { id_ufmodelo,id_grupoproduccion} = req.params;
-  
+  const {fecha_creacion_inicio,fecha_creacion_fin , id_ufmodelo,id_grupoproduccion} = req.params;
+  console.log('datos del fonrt',id_ufmodelo,id_grupoproduccion,fecha_creacion_inicio,fecha_creacion_fin)
   try {
     let consulta = `
       SELECT 
@@ -130,6 +130,7 @@ export const getDTPPS = async (req, res) => {
         ufmodelo.nombre_modelo AS nombre_ufmodelo,
         aserradero.nombre_aserradero AS aserradero1,
         aserradero2.nombre_aserradero AS aserradero2,
+        
         cernidodetalle.detalle AS cernidodetalle,
         cernidodetalle2.detalle AS cernidodetalle2
       FROM 
@@ -155,6 +156,19 @@ export const getDTPPS = async (req, res) => {
 
     const params = [];
   
+    if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+          consulta += ' AND (d.fecha_real BETWEEN ? AND ?)';
+          params.push(fecha_creacion_inicio, fecha_creacion_fin);
+      } else if (fecha_creacion_inicio !== 'null') {
+          consulta += ' AND d.fecha_real >= ?';
+          params.push(fecha_creacion_inicio);
+      } else {
+          consulta += ' AND d.fecha_real <= ?';
+          params.push(fecha_creacion_fin);
+      }
+  }
+
     if ( id_ufmodelo !== 'null') {
       consulta += ' AND (d.id_ufmodelo IS NULL OR d.id_ufmodelo = ?)';
       params.push(id_ufmodelo);
@@ -165,22 +179,7 @@ export const getDTPPS = async (req, res) => {
       params.push(id_grupoproduccion);
     }
 
-//     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-//       consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
-//       params.push(fecha_creacion_inicio, fecha_creacion_fin);
-//     } else if (fecha_creacion_inicio !== 'null') {
-//       consulta += ' AND d.fecha_creacion >= ?';
-//       params.push(fecha_creacion_inicio);
-//     } else if (fecha_creacion_fin !== 'null') {
-//       consulta += ' AND d.fecha_creacion <= ?';
-//       params.push(fecha_creacion_fin);
-    
-//   }
-//   else if (fecha_creacion_inicio !== 'null') {
-//     consulta += ' AND d.fecha_creacion = ?';
-//     params.push(fecha_creacion_inicio);
-// }
- 
+  
     const [rows] = await pool.query(consulta, params);
 
     res.status(200).json(rows);

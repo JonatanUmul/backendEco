@@ -65,10 +65,11 @@ export const getDTHP = async (req, res) => {
 
   export const getDTHPP = async (req, res) => {
     const { id_asrd, fecha_creacion_inicio,fecha_creacion_fin, id_patio, id_enc } = req.params; // Obtener los parámetros de la URL
-
+console.log('idpatio',id_patio)
     try {
         let consulta = `
         SELECT 
+        'dthp' as tabla,
                 d.hora_creacion,
                 d.esquinaSupIZ,
                 d.esquinaSupDA,
@@ -76,7 +77,7 @@ export const getDTHP = async (req, res) => {
                 d.esquinaInfDR,
                 d.esquinaInfIZ,
                 d.fecha_creacion,
-              
+              d.id_patio,
                 othp.id AS id_OTHP,
                 aserradero.nombre_aserradero AS aserradero,
                 patios.nombrePatio AS patio,

@@ -83,7 +83,9 @@ export const getDASERRI = async (req, res) => {
   try {
       let consulta = `
       SELECT 
+      'daserrin' as tabla,
       d.id,
+      d.id_patio,
       d.cantidad_inicial,
       (d.cantidad_inicial - d.cantidad_final) AS merma,
       d.cantidad_final,

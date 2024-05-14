@@ -9,7 +9,7 @@ const router = Router();
 router.post('/DTP', postDTP);
 
 router.get('/DTP/:id', getDTP);
-router.get('/DTP/:id_ufmodelo/:id_grupoproduccion ', getDTPPS);
+router.get('/DTP/:fecha_creacion_inicio/:fecha_creacion_fin/:id_ufmodelo/:id_grupoproduccion', getDTPPS);
 
 
 export default router;

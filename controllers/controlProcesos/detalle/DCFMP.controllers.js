@@ -9,7 +9,8 @@ export const postDCFMP = async (req, res) => {
       barroLB,
       aserrinLB,
       humedadBarro,
-      humedadAserrin
+      humedadAserrin,
+      id_ufmodelo
   } = req.body;
 
   try {
@@ -23,8 +24,8 @@ export const postDCFMP = async (req, res) => {
           humedadBarro !== '' &&
           humedadAserrin !== ''
       ) {
-          const consulta = 'INSERT INTO dcfmp(id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-          const [rows] = await pool.query(consulta, [id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin]);
+          const consulta = 'INSERT INTO dcfmp(id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin,id_ufmodelo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+          const [rows] = await pool.query(consulta, [id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin, id_ufmodelo]);
           res.send({ rows });
       } else {
           res.status(400).send({ error: 'Faltan datos en la solicitud' });
@@ -44,23 +45,25 @@ const id= req.params.id;
 
 try {
   const consulta= `
-  SELECT 
-  d.fecha_produccion,
-  d.hora_creacion,
-  d.barroLB,
-  d.aserrinLB,
-  d.humedadBarro,
-  d.humedadAserrin,
-  d.id_aserradero,
-  aserradero.nombre_aserradero AS aserradero,
-  turno.turno AS turnoProduccion,
-  operarios.Nombre AS formulador
   
-  FROM dcfmp d
-  
-  LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
-  LEFT JOIN turno ON d.id_turno= turno.id
-  LEFT JOIN operarios ON d.id_formulador = operarios.id
+SELECT 
+d.fecha_produccion,
+d.hora_creacion,
+d.barroLB,
+d.aserrinLB,
+d.humedadBarro,
+d.humedadAserrin,
+d.id_aserradero,
+aserradero.nombre_aserradero AS aserradero,
+turno.turno AS turnoProduccion,
+operarios.Nombre AS formulador,
+ufmodelo.nombre_modelo AS modelo
+FROM dcfmp d
+
+LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
+LEFT JOIN turno ON d.id_turno= turno.id
+LEFT JOIN operarios ON d.id_formulador = operarios.id
+LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
   where d.id_cfmp=?
   `
   const [rows]= await pool.query(consulta, [id])
@@ -83,28 +86,25 @@ export const getDCFMPP= async(req, res)=>{
   console.log(fecha_creacion_inicio,fecha_creacion_fin)
   try {
     let consulta= `
-    select 
-    d.id,
-    d.pulido,
-    d.fecha_creacion,
-    d.hora_creacion,
-    d.fechaProduccion,
-    cpb.id as id_cpb,
-    ufmodelo.nombre_modelo as modelo,
-    operarios.Nombre as pulidor,
-    enc_maq.nombre_maq as prensa,
-    modulostarimas.modulo as modulo,
-    calificaciones.calificacion as calificacion
     
-    from 
-      dcpb d
-        
-    left JOIN cpb on d.id_cpb= cpb.id
-    left JOIN ufmodelo on d.id_modelo= ufmodelo.id_mod
-    left join operarios on d.id_pulidor= operarios.id
-    left join enc_maq on d.id_prensa= enc_maq.id_maq
-    left join modulostarimas on d.id_modulo= modulostarimas.id
-    left join calificaciones on d.id_calificacion= calificaciones.id
+SELECT 
+d.fecha_produccion,
+d.hora_creacion,
+d.barroLB,
+d.aserrinLB,
+d.humedadBarro,
+d.humedadAserrin,
+d.id_aserradero,
+aserradero.nombre_aserradero AS aserradero,
+turno.turno AS turnoProduccion,
+operarios.Nombre AS formulador,
+ufmodelo.nombre_modelo AS modelo
+FROM dcfmp d
+
+LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
+LEFT JOIN turno ON d.id_turno= turno.id
+LEFT JOIN operarios ON d.id_formulador = operarios.id
+LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
   
     WHERE 1=1`;
   

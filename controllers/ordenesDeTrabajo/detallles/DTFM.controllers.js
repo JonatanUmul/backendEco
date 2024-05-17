@@ -27,37 +27,38 @@ export const getDTFM = async (req, res) => {
       // Consulta SQL para obtener todos los registros de la tabla dtp
       const consulta = `
       SELECT 
-      d.id,
-      d.cantidad,
-      d.peso, 
-       d.peso2,  
-      d.humedad,
-      d.humedad2,
-      d.fecha_creacion,
-      d.hora_creacion,
-      otfm.id AS id_otfm,
-      enc_matprima.nom_matPrima AS descripcion_matprima,
-      aserradero.nombre_aserradero AS aserradero,
-      cernidodetalle.detalle AS detallecernido1,
-      aserradero2.nombre_aserradero AS aserradero2,
-      cernidodetalle2.detalle AS detallecernido2,
-      ufmodelo.nombre_modelo AS modelo
-  FROM 
-      dtfm d
-  LEFT JOIN
-      otfm ON d.id_OTFM = otfm.id
-  LEFT JOIN
-      enc_matprima ON d.id_matPrim = enc_matprima.id_enc
-  LEFT JOIN
-      aserradero ON d.id_Aserradero = aserradero.id
-  LEFT JOIN
-      cernidodetalle AS cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
-  LEFT JOIN
-      aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  
-  LEFT JOIN
-      cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
-  LEFT JOIN 
-      ufmodelo ON d.id_modelo=ufmodelo.id_mod
+        d.id,
+       d.fecha_creacion,
+        d.hora_creacion,
+        d.cantidad,
+        d.peso, 
+         d.peso2,
+         COALESCE(d.peso, 0) + COALESCE(d.peso2, 0) AS pesoTotal, 
+        d.humedad,
+        d.humedad2,
+        otfm.id AS id_otfm,
+        enc_matprima.nom_matPrima AS descripcion_matprima,
+        aserradero.nombre_aserradero AS aserradero,
+        aserradero2.nombre_aserradero AS aserradero2,
+        cernidodetalle.detalle AS detallecernido1,
+        cernidodetalle2.detalle AS detallecernido2,
+        ufmodelo.nombre_modelo AS modelo
+    FROM 
+        dtfm d
+    LEFT JOIN
+        otfm ON d.id_OTFM = otfm.id
+    LEFT JOIN
+        enc_matprima ON d.id_matPrim = enc_matprima.id_enc
+    LEFT JOIN
+        aserradero ON d.id_Aserradero = aserradero.id
+    LEFT JOIN
+        cernidodetalle AS cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
+    LEFT JOIN
+        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id  
+    LEFT JOIN
+        cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
+    LEFT JOIN 
+        ufmodelo ON d.id_modelo=ufmodelo.id_mod
 
 where otfm.id=?
   `;
@@ -81,18 +82,19 @@ export const getDTFMM = async (req, res) => {
         let consulta = `
         SELECT 
         d.id,
+       d.fecha_creacion,
+        d.hora_creacion,
         d.cantidad,
         d.peso, 
-         d.peso2,  
+         d.peso2,
+         COALESCE(d.peso, 0) + COALESCE(d.peso2, 0) AS pesoTotal, 
         d.humedad,
         d.humedad2,
-        d.fecha_creacion,
-        d.hora_creacion,
         otfm.id AS id_otfm,
         enc_matprima.nom_matPrima AS descripcion_matprima,
         aserradero.nombre_aserradero AS aserradero,
-        cernidodetalle.detalle AS detallecernido1,
         aserradero2.nombre_aserradero AS aserradero2,
+        cernidodetalle.detalle AS detallecernido1,
         cernidodetalle2.detalle AS detallecernido2,
         ufmodelo.nombre_modelo AS modelo
     FROM 

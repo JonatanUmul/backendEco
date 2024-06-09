@@ -66,7 +66,7 @@ where d.id_cth=?
 }
 export const getSDTH = async (req, res) => {
   const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
-console.log('HORNO SELECCIONADO EN EL BCK',horno)
+console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin )
   try {
     let consulta = `
       SELECT 	
@@ -116,13 +116,13 @@ console.log('HORNO SELECCIONADO EN EL BCK',horno)
     }
 
     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-      consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+      consulta += ' AND (d.fecha_real BETWEEN ? AND ?)';
       params.push(fecha_creacion_inicio, fecha_creacion_fin);
     } else if (fecha_creacion_inicio !== 'null') {
-      consulta += ' AND d.fecha_creacion >= ?';
+      consulta += ' AND d.fecha_real >= ?';
       params.push(fecha_creacion_inicio);
     } else if (fecha_creacion_fin !== 'null') {
-      consulta += ' AND d.fecha_creacion <= ?';
+      consulta += ' AND d.fecha_real <= ?';
       params.push(fecha_creacion_fin);
     }
 
@@ -130,6 +130,7 @@ console.log('HORNO SELECCIONADO EN EL BCK',horno)
 
     const [rows] = await pool.query(consulta, params);
     res.status(200).json({ data: rows });
+
   } catch (error) {
     console.error("Error al obtener los datos de la tabla dth:", error);
     res.status(500).json({ error: "Error al obtener los datos de la tabla dth" });

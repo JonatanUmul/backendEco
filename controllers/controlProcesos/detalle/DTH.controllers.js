@@ -22,27 +22,23 @@ let id= req.params.id;
 
 try {
   const consulta= `
-  SELECT 
+  SELECT 	
     d.id,
     d.fecha_creacion,
     d.fecha_real,
     d.hora_creacion,
+     TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
     d.tempCabezaIZ,
     d.tempCentroIZ,
     d.tempPieIZ,
     d.tempCabezaDR,
     d.tempCentroDR,
     d.tempPieDR,
-    ROUND(((d.tempCabezaIZ +d.tempCentroIZ+d.tempCentroDR+ d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
+    ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
     cth.id AS id_cth,
     ufmodelo.nombre_modelo AS modelo,
     enc_maq.nombre_maq AS horno,
-    IF(
-      TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
-      'Día',
-      'Noche'
-  ) AS turnos1,
-  turno.turno AS turnos
+    turno.turno AS turno 
 FROM 
     dth d
 LEFT JOIN 
@@ -53,12 +49,13 @@ LEFT JOIN
     enc_maq ON d.id_horno = enc_maq.id_maq
 LEFT JOIN 
     turno ON d.id_turno = turno.id
-
-
+   
 where d.id_cth=?
+
 `
 
   const [rows]= await pool.query(consulta, [id])
+  consulta += ' ORDER BY d.id ASC, tiempo_transcurrido ASC';
   res.status(200).json({ data: rows });
 
     } catch (error) {
@@ -67,65 +64,58 @@ where d.id_cth=?
     }
     
 }
-
-export const getSDTH= async (req, res)=>{
-  const {fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno}= req.params;
-console.log('fechas',fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno)
+export const getSDTH = async (req, res) => {
+  const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
+console.log('HORNO SELECCIONADO EN EL BCK',horno)
   try {
-    let consulta= `
-   
- select 
- 'dth' as tabla,
- d.id,
- d.id_turno,
- d.id_horno,
- d.fecha_real,
- d.fecha_creacion,
- d.hora_creacion,
- IF(
-   TIME(d.hora_creacion) >= '04:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
-   'Día',
-   'Noche'
-) AS turnos1,
-turno.turno AS turnos,
- d.tempCabezaIZ,
- d.tempCentroIZ,
- d.tempPieIZ,
- d.tempCabezaDR,
- d.tempCentroDR,
- d.tempPieDR,
- ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR  + d.tempPieDR) / 4), 0) AS promedio,
- cth.id as id_cth,
- ufmodelo.nombre_modelo as modelo,
- enc_maq.nombre_maq as horno 
-
- 
- from dth d
- 
- left join cth on d.id_cth= cth.id
- left join ufmodelo on d.id_modelo= ufmodelo.id_mod
- left join enc_maq on d.id_horno= enc_maq.id_maq
- left join turno on d.id_turno= turno.id
-
-    WHERE 1 = 1`;
+    let consulta = `
+      SELECT 	
+        d.id,
+        d.fecha_creacion,
+        d.fecha_real,
+        d.hora_creacion,
+        TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
+        d.tempCabezaIZ,
+        d.tempCentroIZ,
+        d.tempPieIZ,
+        d.tempCabezaDR,
+        d.tempCentroDR,
+        d.tempPieDR,
+        ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
+        cth.id AS id_cth,
+        ufmodelo.nombre_modelo AS modelo,
+        enc_maq.nombre_maq AS horno,
+        turno.turno AS turno 
+      FROM 
+        dth d
+      LEFT JOIN 
+        cth ON d.id_cth = cth.id
+      LEFT JOIN 
+        ufmodelo ON d.id_modelo = ufmodelo.id_mod
+      LEFT JOIN 
+        enc_maq ON d.id_horno = enc_maq.id_maq
+      LEFT JOIN 
+        turno ON d.id_turno = turno.id
+      WHERE 1 = 1`;
 
     const params = [];
 
-    
-  if (modeloUF !== 'null') {
-    consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
-    params.push(modeloUF)}
+    if (modeloUF !== 'null') {
+      consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
+      params.push(modeloUF);
+    }
 
-if (horno !== 'null') {
-  consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
-  params.push(horno)}
+    if (horno !== 'null') {
+      consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
+      params.push(horno);
+    }
 
-if (turn !== 'null') {
-  consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
-  params.push(turn);
-}
+    if (turn !== 'null') {
+      consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
+      params.push(turn);
+    }
 
- if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+    if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
       consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
       params.push(fecha_creacion_inicio, fecha_creacion_fin);
     } else if (fecha_creacion_inicio !== 'null') {
@@ -136,13 +126,12 @@ if (turn !== 'null') {
       params.push(fecha_creacion_fin);
     }
 
+    consulta += ' ORDER BY d.id ASC, tiempo_transcurrido ASC';
 
     const [rows] = await pool.query(consulta, params);
     res.status(200).json({ data: rows });
-  
-      } catch (error) {
-          console.error("Error al obtener los datos de la tabla dth:", error);
-        res.status(500).json({ error: "Error al obtener los datos de la tabla dth" });
-      }
-      
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dth:", error);
+    res.status(500).json({ error: "Error al obtener los datos de la tabla dth" });
   }
+};

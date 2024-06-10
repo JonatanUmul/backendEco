@@ -110,7 +110,7 @@ export const getDTP = async (req, res) => {
 
 export const getDTPPS = async (req, res) => {
   const {fecha_creacion_inicio,fecha_creacion_fin , id_ufmodelo,id_grupoproduccion} = req.params;
-  console.log('datos del fonrt',id_ufmodelo,id_grupoproduccion,fecha_creacion_inicio,fecha_creacion_fin)
+  
   try {
     let consulta = `
     SELECT 
@@ -186,6 +186,7 @@ export const getDTPPS = async (req, res) => {
     const [rows] = await pool.query(consulta, params);
 
     res.status(200).json(rows);
+    console.log('datos del fonrt',id_ufmodelo,id_grupoproduccion,fecha_creacion_inicio,fecha_creacion_fin)
   } catch (error) {
     console.error("Error al obtener los datos de la tabla dthp:", error);
     res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });

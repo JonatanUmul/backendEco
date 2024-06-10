@@ -239,18 +239,15 @@ export const getDTTT = async (req, res) => {
  
   
     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-          consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
-          params.push(fecha_creacion_inicio, fecha_creacion_fin);
-      } else if (fecha_creacion_inicio !== 'null') {
-          consulta += ' AND d.fecha_creacion >= ?';
-          params.push(fecha_creacion_inicio);
-      } else {
-          consulta += ' AND d.fecha_creacion <= ?';
-          params.push(fecha_creacion_fin);
-      }
-  }
-
+      consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
+      params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== 'null') {
+      consulta += ' AND d.fecha_creacion >= ?';
+      params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== 'null') {
+      consulta += ' AND d.fecha_creacion <= ?';
+      params.push(fecha_creacion_fin);
+    }
 
 
     const [rows] = await pool.query(consulta, params);

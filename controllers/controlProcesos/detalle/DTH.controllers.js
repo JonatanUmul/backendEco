@@ -66,7 +66,7 @@ where d.id_cth=?
 }
 export const getSDTH = async (req, res) => {
   const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
-console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin )
+console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin, modeloUF )
   try {
     let consulta = `
       SELECT 	

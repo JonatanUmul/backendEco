@@ -63,7 +63,7 @@ export const getDTHP = async (req, res) => {
   };
 
 
-  export const getDTHPP = async (req, res) => {
+export const getDTHPP = async (req, res) => {
     const { id_asrd, fecha_creacion_inicio,fecha_creacion_fin, id_patio, id_enc } = req.params; // Obtener los parámetros de la URL
 console.log('idpatio',id_patio, fecha_creacion_inicio,fecha_creacion_fin)
     try {
@@ -76,6 +76,9 @@ console.log('idpatio',id_patio, fecha_creacion_inicio,fecha_creacion_fin)
                 d.esquinaCentro,
                 d.esquinaInfDR,
                 d.esquinaInfIZ,
+                ROUND((
+                    d.esquinaSupIZ + d.esquinaSupDA + d.esquinaCentro + d.esquinaInfDR + 
+                    d.esquinaInfIZ) / 5) AS promedio,
                 d.fecha_creacion,
               d.id_patio,
                 othp.id AS id_OTHP,

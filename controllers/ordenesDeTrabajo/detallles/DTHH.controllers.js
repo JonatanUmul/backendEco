@@ -82,7 +82,7 @@ LEFT JOIN
 export const getSSDTH = async(req, res)=>{
 
     const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno}= req.params
-
+console.log('Datos en el Back de Horneados',fecha_creacion_fin,fecha_creacion_inicio)
     try {
     let consulta = 
     `  SELECT 

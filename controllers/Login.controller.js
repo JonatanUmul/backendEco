@@ -33,7 +33,7 @@ console.log(username, password)
 
         console.log("Inicio de sesión exitoso");
 
-        const token = jwt.sign({ username }, "Stack", { expiresIn: '1m' });
+        const token = jwt.sign({ username }, "Stack", { expiresIn: '1d' });
         res.status(200).json({ message: "Inicio de sesión exitoso", token, username });
         
     } catch (error) {

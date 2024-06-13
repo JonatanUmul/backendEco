@@ -167,44 +167,52 @@ export const getDTTT = async (req, res) => {
 
   try {
     let consulta = `
-      SELECT 
-        d.id_CTT,
-        d.cabezaDerecha1,
-        d.pieDerecho1,
-        d.cabezaDerecha2,
-        d.pieDerecho2,
-        d.cabezaDerecha3,
-        d.pieIzquierdo1,
-        d.cabezaizquierda1,
-        d.pieIzquierdo2,
-        ROUND((
-          d.cabezaDerecha1 + d.pieDerecho1 + d.cabezaDerecha2 + d.pieDerecho2 + 
-          d.cabezaDerecha3 + d.pieIzquierdo1 + d.cabezaizquierda1 + d.pieIzquierdo2
-        ) / 8) AS promedio,
-        d.fecha_creacion,
-        d.hora_creacion,
+         
+    SELECT 
+    d.id_CTT,
+    d.cabezaDerecha1,
+    d.pieDerecho1,
+    d.cabezaDerecha2,
+    d.pieDerecho2,
+    d.cabezaDerecha3,
+    d.pieIzquierdo1,
+    d.cabezaizquierda1,
+    d.pieIzquierdo2,
+    ROUND((
+      d.cabezaDerecha1 + d.pieDerecho1 + d.cabezaDerecha2 + d.pieDerecho2 + 
+      d.cabezaDerecha3 + d.pieIzquierdo1 + d.cabezaizquierda1 + d.pieIzquierdo2
+    ) / 8) AS promedio,
+    d.fecha_creacion,
+    d.hora_creacion,
+    turnos,
+    ufmodelo.nombre_modelo AS modelo1,
+    ufmodelo2.nombre_modelo AS modelo2,
+    enc_maq.nombre_maq AS tunel,
+    estadouf.estado AS estadouf
+FROM (
+    SELECT 
+        d.*,
         IF(
-          TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
-          'Día',
-          IF(
-            TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59',
-            'Noche',
+            TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00',
+            'Día',
             IF(
-              TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:0',
-              'Noche',
-              NULL
+                TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59',
+                'Noche',
+                IF(
+                    TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:00',
+                    'Noche',
+                    NULL
+                )
             )
-          )
-        ) AS turnos,
-        ufmodelo.nombre_modelo AS modelo1,
-        ufmodelo2.nombre_modelo AS modelo2,
-        enc_maq.nombre_maq AS tunel,
-        estadouf.estado AS estadouf
-      FROM dtt d
-      LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
-      LEFT JOIN ufmodelo AS ufmodelo2 ON d.id_modelo2 = ufmodelo2.id_mod
-      LEFT JOIN enc_maq ON d.id_tunel = enc_maq.id_maq
-      LEFT JOIN estadouf ON d.id_estadouf = estadouf.id
+        ) AS turnos
+    FROM dtt d
+) d
+LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN ufmodelo AS ufmodelo2 ON d.id_modelo2 = ufmodelo2.id_mod
+LEFT JOIN enc_maq ON d.id_tunel = enc_maq.id_maq
+LEFT JOIN estadouf ON d.id_estadouf = estadouf.id
+
+
       WHERE 1 = 1`;
 
     const params = [];
@@ -218,18 +226,11 @@ export const getDTTT = async (req, res) => {
       consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
       params.push(ufmodelo);
     }
-
     if (turnoProd !== 'null') {
-      consulta += `
-        AND (
-          TIME(d.hora_creacion) >= '05:00:00' AND TIME(d.hora_creacion) <= '17:00:00' AND ? = 'Día'
-          OR
-          TIME(d.hora_creacion) >= '17:01:00' AND TIME(d.hora_creacion) <= '23:59:59' AND ? = 'Noche'
-          OR
-          TIME(d.hora_creacion) >= '00:00:00' AND TIME(d.hora_creacion) <= '02:00:0' AND ? = 'Noche'
-        )`;
-      params.push(turnoProd, turnoProd, turnoProd);
+      consulta += ' AND (d.turnos IS NULL OR d.turnos = ?)';
+      params.push(turnoProd);
     }
+   
 
     if (tunelNum !== 'null') {
       consulta += ' AND (d.id_tunel IS NULL OR d.id_tunel = ?)';

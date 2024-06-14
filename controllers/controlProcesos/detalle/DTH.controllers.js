@@ -21,7 +21,7 @@ export const getDTH= async (req, res)=>{
 let id= req.params.id;
 
 try {
-  const consulta= `
+  let consulta= `
   SELECT 	
     d.id,
     d.fecha_creacion,
@@ -98,7 +98,7 @@ console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_
         turno ON d.id_turno = turno.id
       WHERE 1 = 1`;
 
-    const params = [];
+    let params = [];
 
     if (modeloUF !== 'null') {
       consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';

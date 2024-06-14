@@ -157,7 +157,7 @@ export const getDTPPS = async (req, res) => {
    
         WHERE 1=1`;
 
-    const params = [];
+    let params = [];
   
     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
       if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {

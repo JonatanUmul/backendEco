@@ -9,17 +9,19 @@ export const postUsuarios = async (req, res) => {
 console.log(username, password)
     try {
         // Realizar la consulta a la base de datos para obtener la contraseña almacenada
-        const [rows] = await pool.query("SELECT password FROM user WHERE username = ? ", [username]);
+        const [rows] = await pool.query("SELECT password, id_rol, username, nombre FROM user WHERE username = ? ", [username]);
         console.log(rows)
         if (rows.length === 0) {
             console.log("Usuario no encontrado");
             return res.status(401).send({ message: "Usuario no encontrado" });
         } 
    
-
-            const storedPassword = rows[0].password;
+        const id_rol=rows[0].id_rol;
+        const usuario= rows[0].username;
+        const nombre= rows[0].nombre
+        const storedPassword = rows[0].password;
         console.log('pas de la BD',storedPassword)
-    
+    console.log('Nombre capturado',nombre)
         const compararContraseña=(password===storedPassword)
         
         // Comparar la contraseña ingresada con la contraseña almacenada
@@ -33,9 +35,12 @@ console.log(username, password)
 
         console.log("Inicio de sesión exitoso");
 
-        const token = jwt.sign({ username }, "Stack", { expiresIn: '1d' });
-        res.status(200).json({ message: "Inicio de sesión exitoso", token, username });
-        
+        const token = jwt.sign({username, id_rol, nombre, usuario}, "Stack", {
+
+            expiresIn: '24h' // expires in 24 hours
+
+             });        res.status(200).json({ message: "Inicio de sesión exitoso", token, username, id_rol, usuario, nombre });
+        console.log('Token',token)
     } catch (error) {
         console.error("Error al ejecutar la consulta:", error);
         res.status(500).json({ error: "Error del servidor" });

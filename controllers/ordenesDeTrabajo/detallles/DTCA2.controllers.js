@@ -2,14 +2,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDTCA2 = async (req, res) => {
 
-    const { id_OTCA2,id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso} = req.body;
+    const { id_OTCA2,id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso, id_creador} = req.body;
     try {
     
-        if (id_OTCA2 === '' ||id_MP===''|| id_aserradero === '' || cantidad_inicial === '' || cernido_fino === '' ||cernido_grueso==='' ) {
+        if (id_OTCA2 === '' ||id_MP===''|| id_aserradero === '' || cantidad_inicial === '' || cernido_fino === '' ||cernido_grueso===''||id_creador==='' ) {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtca2(id_OTCA2, id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso) VALUES (?, ?, ?, ?,?,?)';
-            const [rows] = await pool.query(consulta, [ id_OTCA2, id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso]);
+            const consulta = 'INSERT INTO dtca2(id_OTCA2, id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso, id_creador) VALUES (?, ?, ?, ?,?,?,?)';
+            const [rows] = await pool.query(consulta, [ id_OTCA2, id_MP, id_aserradero, cantidad_inicial, cernido_fino, cernido_grueso, id_creador]);
             res.send({ rows });
         }
     } catch (err) {

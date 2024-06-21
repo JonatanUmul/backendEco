@@ -3,11 +3,11 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDCPCD = async (req, res) => {
-  const { id_cpcd,id_turno,id_mod,barroLB,molde,diametro,pesouf,aserrinLB,alturaH1,alturaH2,grosor1,grosor2,grosorFondo} = req.body;
+  const { id_cpcd,id_turno,id_mod,barroLB,molde,diametro,pesouf,aserrinLB,alturaH1,alturaH2,grosor1,grosor2,grosorFondo, id_creador} = req.body;
  
   try {
-    const consulta = 'INSERT INTO dcpcd (id_cpcd,id_turno,id_mod,barroLB,aserrinLB,molde,diametro,pesouf,alturaH1,alturaH2,grosor1,grosor2,grosorFondo) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?,?,?,?,?)';
-    const [rows] = await pool.query(consulta, [ id_cpcd,id_turno,id_mod,barroLB,aserrinLB,molde,diametro,pesouf,alturaH1,alturaH2,grosor1,grosor2,grosorFondo]);
+    const consulta = 'INSERT INTO dcpcd (id_cpcd,id_turno,id_mod,barroLB,aserrinLB,molde,diametro,pesouf,alturaH1,alturaH2,grosor1,grosor2,grosorFondo, id_creador) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?,?,?,?,?,?)';
+    const [rows] = await pool.query(consulta, [ id_cpcd,id_turno,id_mod,barroLB,aserrinLB,molde,diametro,pesouf,alturaH1,alturaH2,grosor1,grosor2,grosorFondo, id_creador]);
     res.send({ rows });
   } catch (err) {
     console.log('Error al guardar los datos', err);

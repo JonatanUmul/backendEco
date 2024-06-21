@@ -12,7 +12,8 @@ export const postDCFMP = async (req, res) => {
       humedadAserrin,
       id_ufmodelo,
       id_aserradero2,
-      aserrinLB2
+      aserrinLB2,
+      id_creador
   } = req.body;
 
   try {
@@ -26,8 +27,8 @@ export const postDCFMP = async (req, res) => {
           humedadBarro !== '' &&
           humedadAserrin !== ''
       ) {
-          const consulta = 'INSERT INTO dcfmp(id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin,id_ufmodelo, id_aserradero2, aserrinLB2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)';
-          const [rows] = await pool.query(consulta, [id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin, id_ufmodelo,id_aserradero2, aserrinLB2]);
+          const consulta = 'INSERT INTO dcfmp(id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin,id_ufmodelo, id_aserradero2, aserrinLB2, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)';
+          const [rows] = await pool.query(consulta, [id_cfmp, id_turno, id_aserradero, id_formulador, barroLB, aserrinLB, humedadBarro, humedadAserrin, id_ufmodelo,id_aserradero2, aserrinLB2, id_creador]);
           res.send({ rows });
       } else {
           res.status(400).send({ error: 'Faltan datos en la solicitud' });

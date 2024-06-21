@@ -1,7 +1,7 @@
 import { pool } from "../../../src/db.js";
 
 export const postDASERRIN = async (req, res) => {
-  const { id_OTSaserrin, id_MP, id_asrd, id_patio, cantidad_inicial, cantidad_final }=req.body;
+  const { id_OTSaserrin, id_MP, id_asrd, id_patio, cantidad_inicial, cantidad_final, id_creador  }=req.body;
   console.log(id_OTSaserrin);
   try {
     if (
@@ -15,14 +15,15 @@ export const postDASERRIN = async (req, res) => {
       console.log("Uno o varios datos están vacíos");
     } else {
       const consulta =
-        "INSERT INTO daserrin(id_OTSaserrin, id_MP, id_asrdSMP, id_patio, cantidad_inicial, cantidad_final) VALUES (?, ?, ?, ?, ?,?)";
+        "INSERT INTO daserrin(id_OTSaserrin, id_MP, id_asrdSMP, id_patio, cantidad_inicial, cantidad_final, id_creador) VALUES (?, ?, ?, ?, ?,?, ?)";
       const [rows] = await pool.query(consulta, [
       id_OTSaserrin,
       id_MP,
       id_asrd,
       id_patio,
       cantidad_inicial,
-      cantidad_final
+      cantidad_final,
+      id_creador
       ]);
       res.send({ rows });
     }

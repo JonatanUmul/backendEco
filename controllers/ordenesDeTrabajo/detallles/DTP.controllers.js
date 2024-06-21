@@ -4,16 +4,16 @@ import { pool } from "../../../src/db.js";
 export const postDTP = async (req, res) => {
    
   const {
-    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion} = req.body;
+    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador} = req.body;
 
 
 console.log(id_grupoproduccion)
   try {
-    if(id_OTP===''|| id_turno===''|| id_grupoproduccion===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='')
+    if(id_OTP===''|| id_turno===''|| id_grupoproduccion===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='' || id_creador==='')
     { console.log('Uno o varios datos están vacíos');
     return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
   }else{
-      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?)";
+      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?,?)";
       const [rows] = await pool.query(consulta, [
         id_OTP,
         fecha_real,
@@ -30,8 +30,8 @@ console.log(id_grupoproduccion)
     librasBarro,
     librasAserrin,
     librasAserrin2,
-    observacion
-      
+    observacion, 
+    id_creador
       ]);
       res.send({ rows });
     }

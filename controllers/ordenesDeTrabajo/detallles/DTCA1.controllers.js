@@ -2,13 +2,12 @@ import { pool } from "../../../src/db.js";
 
 export const postDTCA1 = async (req, res) => {
 
-    const { id_OTCA1,id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal} = req.body;
+    const { id_OTCA1,id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal, id_creador} = req.body;
     try {
-        if (id_OTCA1 === '' ||id_MP===''|| id_aserradero === '' || CantidadInicial === '' || CantidadFinal === '' ) {
-            console.log('Uno o varios datos están vacíos');
+        if (id_OTCA1 === '' ||id_MP===''|| id_aserradero === '' || CantidadInicial === '' || CantidadFinal === '' ||id_creador==='') {
         } else {
-            const consulta = 'INSERT INTO dtca1 (id_OTCA1,id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal) VALUES (?, ?, ?, ?,?,?)';
-            const [rows] = await pool.query(consulta, [ id_OTCA1, id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal]);
+            const consulta = 'INSERT INTO dtca1 (id_OTCA1,id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal, id_creador) VALUES (?, ?, ?, ?,?,?,?)';
+            const [rows] = await pool.query(consulta, [ id_OTCA1, id_MP, id_aserradero, id_tipoCernido, CantidadInicial, CantidadFinal, id_creador]);
             res.send({ rows });
         }
     } catch (err) {
@@ -21,7 +20,6 @@ export const postDTCA1 = async (req, res) => {
 
 export const getDTCA1 = async (req, res) => {
     const id= req.params.id;
-    console.log('hola umul',id)
     try {
       // Consulta SQL para obtener todos los registros de la tabla dtp
       const consulta = `

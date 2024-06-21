@@ -3,11 +3,11 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDTT = async (req, res) => {
-  const { id_CTT,id_tunel,id_estadouf, id_modelo,id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2  } = req.body;
+  const { id_CTT,id_tunel,id_estadouf, id_modelo,id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2, id_creador  } = req.body;
   
   try {
-    const consulta = 'INSERT INTO dtt (id_CTT, id_tunel,id_estadouf, id_modelo, id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)';
-    const [rows] = await pool.query(consulta, [id_CTT,id_tunel, id_estadouf, id_modelo,id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2  ]);
+    const consulta = 'INSERT INTO dtt (id_CTT, id_tunel,id_estadouf, id_modelo, id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2 , id_creador ) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)';
+    const [rows] = await pool.query(consulta, [id_CTT,id_tunel, id_estadouf, id_modelo,id_modelo2,cabezaDerecha1, pieDerecho1, cabezaDerecha2,pieDerecho2, cabezaDerecha3,pieIzquierdo1,cabezaizquierda1, pieIzquierdo2 ,id_creador ]);
     res.send({ rows });
   } catch (err) {
     console.log('Error al guardar los datos', err);

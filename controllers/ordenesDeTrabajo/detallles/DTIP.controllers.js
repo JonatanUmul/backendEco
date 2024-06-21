@@ -3,14 +3,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDTIP = async (req, res) => {
 
-    const { id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creadot } = req.body;
+    const { id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador } = req.body;
    
     try {
         if (id_OTIP === '' ||TipoPlata===''|| id_modelo === '', codigoInicio==='' || codigoFinal === '' || impregnados === '' || mermas === '' ) {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtip (id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creadot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            const [rows] = await pool.query(consulta, [id_OTIP, TipoPlata, fecha_real,id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creadot]);
+            const consulta = 'INSERT INTO dtip (id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const [rows] = await pool.query(consulta, [id_OTIP, TipoPlata, fecha_real,id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador]);
             res.send({ rows });
         }
     } catch (err) {

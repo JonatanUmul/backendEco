@@ -43,7 +43,18 @@ const postUsuarios = async (req, res) => {
 
 const getUsuarios = async (req, res) => {
     try {
-        const consulta = 'SELECT * FROM user';
+        const consulta = `SELECT 
+d.username,
+d.correo,
+d.telefono,
+d.firmaUsr,
+operarios.Nombre AS nombre,
+roles.rol AS rol
+
+FROM user d
+
+LEFT JOIN operarios ON d.nombre=operarios.id
+LEFT JOIN roles ON d.id_rol=roles.id_rol`;
         const [rows] = await pool.query(consulta);
         res.send({ rows });
         console.log(rows);

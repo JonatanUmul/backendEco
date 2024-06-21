@@ -4,15 +4,15 @@ import { pool } from "../../../src/db.js";
 
 export const postCTT = async(req, res)=>{
     const id_est= 2;
-    // const id_creador= 8;
+    const id_creador= req.body.id_creador
     const codigoInicio= req.body.codigoInicio;
     const codigoFinal= req.body.codigoFinal
     const cantidad=  req.body.cantidad
    
     try{
     
-       const consulta='INSERT INTO ctt(id_est, codigoInicio, codigoFinal, cantidad)Values(?,?, ?, ?)';
-        const [rows]= await pool.query(consulta,[id_est, codigoInicio, codigoFinal, cantidad])
+       const consulta='INSERT INTO ctt(id_est, codigoInicio, codigoFinal, cantidad, id_creador)Values(?,?, ?, ?, ?)';
+        const [rows]= await pool.query(consulta,[id_est, codigoInicio, codigoFinal, cantidad, id_creador])
         res.send({rows});
         
         

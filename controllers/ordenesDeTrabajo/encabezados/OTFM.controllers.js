@@ -4,7 +4,7 @@ import { pool } from "../../../src/db.js";
 
 export const postOTFM = async(req, res)=>{
     const estado= 2;
-    const id_creador= 4;
+    const id_creador=req.body.id_creador;
     
     try{
         if(estado===''){

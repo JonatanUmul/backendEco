@@ -25,7 +25,8 @@ export const postDTCC = async(req, res)=>{
         rajadosCC,
         crudoCC,
         quemados,
-        ahumados
+        ahumados,
+        id_creador
         } = req.body;
     
 
@@ -54,7 +55,8 @@ export const postDTCC = async(req, res)=>{
                 rajadosCC,
                 crudoCC,
                 quemados,
-                ahumados)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?)`;
+                ahumados,
+                id_creador)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[  
             id_OTCC,
             horneados,
@@ -75,7 +77,8 @@ export const postDTCC = async(req, res)=>{
             rajadosCC,
             crudoCC,
             quemados,
-            ahumados])
+            ahumados,
+            id_creador])
         res.send({rows});
         }
         

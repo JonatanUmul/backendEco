@@ -3,11 +3,11 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDRM = async (req, res) => {
-  const { id_CRM, codigo, id_modelo, id_motivo } = req.body;
+  const { id_CRM, codigo, id_modelo, id_motivo, id_creador } = req.body;
   
   try {
-    const consulta = 'INSERT INTO drm (id_CRM, codigo, id_modelo, id_motivo) VALUES (?, ?, ?, ?)';
-    const [rows] = await pool.query(consulta, [id_CRM, codigo, id_modelo, id_motivo]);
+    const consulta = 'INSERT INTO drm (id_CRM, codigo, id_modelo, id_motivo, id_creador) VALUES (?, ?, ?, ?,?)';
+    const [rows] = await pool.query(consulta, [id_CRM, codigo, id_modelo, id_motivo, id_creador]);
     res.send({ rows });
   } catch (err) {
     console.log('Error al guardar los datos', err);

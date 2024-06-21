@@ -2,14 +2,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDTHP = async (req, res) => {
 
-    const { id_OTHP,id_matPrima, fecha_real, id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfIZ, esquinaInfDR } = req.body;
+    const { id_OTHP,id_matPrima, fecha_real, id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfIZ, esquinaInfDR, id_creador } = req.body;
     console.log(id_OTHP)
     try {
-        if (id_OTHP === '' || id_asrd === '', id_matPrima==='' || id_patio === '' || esquinaSupIZ === '' || esquinaSupDA === '' || esquinaCentro === '' || esquinaInfIZ === '' || esquinaInfDR === '') {
+        if (id_OTHP === '' || id_asrd === '', id_matPrima==='' || id_patio === '' || esquinaSupIZ === '' || esquinaSupDA === '' || esquinaCentro === '' || esquinaInfIZ === '' || esquinaInfDR === '' ||id_creador==='') {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dthp (id_OTHP,id_matPrima,fecha_real,  id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfDR, esquinaInfIZ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            const [rows] = await pool.query(consulta, [id_OTHP,id_matPrima,fecha_real, id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfIZ, esquinaInfDR]);
+            const consulta = 'INSERT INTO dthp (id_OTHP,id_matPrima,fecha_real,  id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfDR, esquinaInfIZ, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const [rows] = await pool.query(consulta, [id_OTHP,id_matPrima,fecha_real, id_asrd, id_patio, esquinaSupIZ, esquinaSupDA, esquinaCentro, esquinaInfIZ, esquinaInfDR, id_creador]);
             res.send({ rows });
         }
     } catch (err) {

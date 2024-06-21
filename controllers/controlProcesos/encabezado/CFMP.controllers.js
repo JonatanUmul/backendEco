@@ -4,13 +4,14 @@ import { pool } from "../../../src/db.js";
 
 export const postCFMP = async(req, res)=>{
     const id_est= 2;
+    const id_creador= req.body.id_creador
 
    
 
     try{
     
-       const consulta='INSERT INTO cfmp(id_est)Values(?)';
-        const [rows]= await pool.query(consulta,[id_est])
+       const consulta='INSERT INTO cfmp(id_est, id_creador )Values(?,?)';
+        const [rows]= await pool.query(consulta,[id_est, id_creador])
         res.send({rows});
         
         

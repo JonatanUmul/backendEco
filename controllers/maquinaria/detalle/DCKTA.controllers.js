@@ -13,6 +13,7 @@ export const postDCKTA = async(req, res)=>{
     observacion1,
     observacion2,
     observacion3,
+    id_creador
     }= req.body
    
    
@@ -35,7 +36,8 @@ export const postDCKTA = async(req, res)=>{
             id_accionamientoCorrectoSelenoideLlenado,
             observacion1,
             observacion2,
-            observacion3) Values(?,?,?,?,?,?,?,?)`;
+            observacion3,
+            id_creador) Values(?,?,?,?,?,?,?,?,?)`;
             const [rows]= await pool.query(consulta,[
               id_CKTA,
               id_grupoProduccion,
@@ -44,7 +46,8 @@ export const postDCKTA = async(req, res)=>{
               id_accionamientoCorrectoSelenoideLlenado,
               observacion1,
               observacion2,
-              observacion3
+              observacion3,
+              id_creador
             ])
             res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
             

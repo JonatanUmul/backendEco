@@ -12,7 +12,7 @@ export const postDMBT = async(req, res)=>{
 	id_proveedor,
 	id_responsable,
 	detalle,
-    creador
+  creador
     }= req.body
    
    

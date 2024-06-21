@@ -13,6 +13,7 @@ export const postDCKCTA = async(req, res)=>{
     observacion1,
     observacion2,
     observacion3,
+    id_creador
     }= req.body
    
    
@@ -37,7 +38,8 @@ export const postDCKCTA = async(req, res)=>{
         id_limpiezaGeneralDeCorrederasGuiasCortador,
         observacion1,
         observacion2,
-        observacion3) Values(?,?,?,?,?,?,?,?)`;
+        observacion3,
+        id_creador) Values(?,?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
           id_grupoProduccion,
           id_CKCTA,
@@ -46,7 +48,8 @@ export const postDCKCTA = async(req, res)=>{
           id_limpiezaGeneralDeCorrederasGuiasCortador,
           observacion1,
           observacion2,
-          observacion3
+          observacion3,
+          id_creador
         ])
         res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
       }

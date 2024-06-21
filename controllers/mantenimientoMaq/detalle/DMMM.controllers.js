@@ -10,7 +10,7 @@ export const postDMMM = async (req, res) => {
       id_proveedor,
       id_responsable,
       detalle,
-      creador
+      id_creador
     } = req.body;
   
     try {
@@ -22,7 +22,7 @@ export const postDMMM = async (req, res) => {
         id_proveedor === '' ||
         id_responsable === '' ||
         detalle === '' ||
-        creador === ''
+        id_creador === ''
       ) {
         res.status(400).send('Uno o varios datos están vacíos');
       } else {
@@ -34,7 +34,7 @@ export const postDMMM = async (req, res) => {
           id_proveedor,
           id_responsable,
           detalle,
-          creador
+          id_creador
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         const [rows] = await pool.query(consulta, [
           id_MMM,
@@ -44,7 +44,7 @@ export const postDMMM = async (req, res) => {
           id_proveedor,
           id_responsable,
           detalle,
-          creador
+          id_creador
         ]);
         res.status(200).send({ rows });
       }

@@ -16,7 +16,8 @@ export const postDCKEXT = async(req, res)=>{
     observacion2,
     observacion3,
     observacion4,
-    observacion5
+    observacion5,
+    id_creador
     }= req.body
    
    
@@ -49,7 +50,8 @@ export const postDCKEXT = async(req, res)=>{
           observacion2,
           observacion3,
           observacion4,
-          observacion5) Values(?,?,?,?,?,?,?,?,?,?,?,?)`;
+          observacion5,
+          id_creador) Values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
           const [rows]= await pool.query(consulta,[
             id_grupoProduccion,
             id_CKEXT,
@@ -62,7 +64,8 @@ export const postDCKEXT = async(req, res)=>{
             observacion2,
             observacion3,
             observacion4,
-            observacion5
+            observacion5,
+            id_creador
           ])
           res.status(200).send({ success: true, message: 'Datos guardados correctamente' });
       }

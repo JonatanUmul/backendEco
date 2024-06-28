@@ -39,7 +39,7 @@ export const getDASERRIN = async (req, res) => {
   try {
     // Consulta SQL para obtener todos los registros de la tabla dtp
     const consulta = `
-    select 
+        select 
 		d.id,
 		d.cantidad_inicial,
 		d.cantidad_final,
@@ -47,7 +47,9 @@ export const getDASERRIN = async (req, res) => {
 		otsa.id AS id_otsa,
     enc_matprima.nom_matPrima as matPrima,
 		aserradero.nombre_aserradero AS aserradero,
-		patios.nombrePatio AS patio
+		patios.nombrePatio AS patio,
+		user.firmaUsr AS firma,
+    operarios.Nombre as NombreJefe
 	
 
 	FROM 
@@ -60,6 +62,11 @@ export const getDASERRIN = async (req, res) => {
 		aserradero ON d.id_asrdSMP = aserradero.id
     LEFT JOIN 
 		patios ON d.id_patio = patios.id	
+		  LEFT JOIN 
+   	user ON d.id_creador= user.id
+   	LEFT JOIN
+    operarios ON user.nombre = operarios.id
+
 
     where otsa.id= ?
 
@@ -95,7 +102,9 @@ export const getDASERRI = async (req, res) => {
       otsa.id AS id_OTSA,
       enc_matprima.nom_matPrima as matPrima,
       aserradero.nombre_aserradero AS aserradero,
-      patios.nombrePatio AS patio
+      patios.nombrePatio AS patio,
+      user.firmaUsr AS firma,
+      operarios.Nombre as NombreCreador
   FROM 
       daserrin d
       LEFT JOIN
@@ -106,6 +115,10 @@ export const getDASERRI = async (req, res) => {
       aserradero ON d.id_asrdSMP = aserradero.id
       LEFT JOIN
       patios ON d.id_patio = patios.id
+      LEFT JOIN 
+   	  user ON d.id_creador= user.id
+   	  LEFT JOIN
+      operarios ON user.nombre = operarios.id
 
   WHERE 1=1`;
 

@@ -3,22 +3,18 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDTHH = async(req, res)=>{
-    const estado= 2;
     
     const {
-        id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2,id_creador
+        id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2,id_creador, id_est
      } = req.body;
     
 
     try{
-        if(estado===''){
-            console.log('Uno o varios datos estan vacios')
-        }
-        else{
-            const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?,?)';
-        const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador])
+       
+            const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?)';
+        const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est])
         res.send({rows});
-        }
+        
         
     }catch(err){
         console.log('Error al guardar los datos', err)
@@ -32,6 +28,7 @@ export const getDTHH = async(req, res)=>{
     const consulta = 
     `SELECT 
     d.id,
+    'dthh' as tabla,
     d.codigoInicio,
     d.CodigoFin,
     d.horneado,
@@ -76,17 +73,13 @@ LEFT JOIN
     
 }
 
-
-
-
 export const getSSDTH = async(req, res)=>{
 
-    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno}= req.params
-console.log('Datos en el Back de Horneados',fecha_creacion_fin,fecha_creacion_inicio)
+    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est}= req.params
     try {
     let consulta = 
     `  SELECT 
-    'cthh' as tabla,
+    'DTHH' as tabla,
     d.id,
     d.id_modelo,
     d.id_turno,
@@ -98,6 +91,7 @@ console.log('Datos en el Back de Horneados',fecha_creacion_fin,fecha_creacion_in
     d.librasBarro,
     d.librasAserrin,
     d.fecha_creacion,
+    d.id_est,
     othh.id AS id_othh,
     turno.turno AS turno,
     aserradero.nombre_aserradero AS aserradero,
@@ -133,8 +127,6 @@ LEFT JOIN
 LEFT JOIN
     operarios on id_hornero = operarios.id
 LEFT JOIN dtcc ON  dtcc.fechaHorneado = d.fecha_creacion AND dtcc.modelo = d.id_modelo AND dtcc.id_horno = d.id_horno AND dtcc.turnoHorneado = d.id_turno
-
-
     WHERE 1= 1`;
     
     const params=[]
@@ -152,6 +144,11 @@ LEFT JOIN dtcc ON  dtcc.fechaHorneado = d.fecha_creacion AND dtcc.modelo = d.id_
       consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
       params.push(turn);
     }
+
+    if (id_est !== 'null') {
+        consulta += ' AND ( d.id_est = ?)';
+        params.push(id_est);
+      }
     
      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
           consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
@@ -174,4 +171,22 @@ LEFT JOIN dtcc ON  dtcc.fechaHorneado = d.fecha_creacion AND dtcc.modelo = d.id_
       res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
     }
     
+}
+
+
+
+export const putDTHH = async(req, res)=>{
+    const id =req.body.id;
+    const id_est=req.body.id_est;
+    
+    try {
+        const consulta =`UPDATE dthh SET id_est = ? WHERE id = ?`
+
+        const [rows]= await pool.query(consulta,[id_est, id])
+        res.status(200).json({data:rows})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error:'Error al obtene los datoe de la tabla DTHH'})
+    }
+
 }

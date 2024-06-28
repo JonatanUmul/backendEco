@@ -12,7 +12,7 @@ export const postDMPH2 = async(req, res)=>{
         id_proveedor,
         id_responsable,
         detalle,
-        id_creador
+        creador
       } = req.body;
     
       try {
@@ -24,7 +24,7 @@ export const postDMPH2 = async(req, res)=>{
           id_proveedor === '' ||
           id_responsable === '' ||
           detalle === '' ||
-          id_creador === ''
+          creador === ''
         ) {
           res.status(400).send('Uno o varios datos están vacíos');
         } else {
@@ -36,7 +36,7 @@ export const postDMPH2 = async(req, res)=>{
             id_proveedor,
             id_responsable,
             detalle,
-            id_creador
+            creador
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
           const [rows] = await pool.query(consulta, [
             id_MPH2,
@@ -46,7 +46,7 @@ export const postDMPH2 = async(req, res)=>{
             id_proveedor,
             id_responsable,
             detalle,
-            id_creador
+            creador
           ]);
           res.status(200).send({ rows });
         }

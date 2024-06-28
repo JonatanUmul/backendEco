@@ -10,7 +10,7 @@ import("../../../src/db.js").then(dbModule => {
 const postUsuarios = async (req, res) => {
     const username = req.body.username;
     const password = req.body.password; // Corregido aquí
-    const nombre = req.body.name;
+    const nombre = req.body.nombre;
     const correo = req.body.mail;
     const telefono = req.body.phone;
     const rol = req.body.rol;

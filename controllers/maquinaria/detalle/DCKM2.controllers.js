@@ -23,7 +23,8 @@ export const postDCKM2 = async(req, res)=>{
     observacion5,
     observacion6,
     observacion7,
-    observacion8
+    observacion8,
+    
 
     }= req.body
    

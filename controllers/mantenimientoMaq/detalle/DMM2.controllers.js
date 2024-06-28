@@ -11,7 +11,7 @@ export const postDMM2 = async(req, res)=>{
 	id_proveedor ,
 	id_responsable ,
 	detalle ,
-  id_creador
+  creador
     }= req.body
    
    
@@ -24,7 +24,7 @@ export const postDMM2 = async(req, res)=>{
         id_proveedor ,
         id_responsable ,
         detalle ,
-        id_creador) Values(?,?,?,?,?,?,?)`;
+        creador) Values(?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
             id_MM2 ,
             id_estadomaq ,
@@ -32,7 +32,7 @@ export const postDMM2 = async(req, res)=>{
             id_proveedor ,
             id_responsable ,
             detalle ,
-            id_creador
+            creador
         ])
         res.send({rows});
         

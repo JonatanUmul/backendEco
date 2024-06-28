@@ -36,9 +36,9 @@ export const getDTHP = async (req, res) => {
       othp.id AS id_OTHP,
       enc_matprima.nom_matPrima as materiaPrima,
       aserradero.nombre_aserradero AS aserradero,
-      patios.nombrePatio AS patio
-  
-
+      patios.nombrePatio AS patio,
+	user.firmaUsr AS firma,
+      operarios.Nombre as NombreCreador
   FROM 
       dthp d
   LEFT JOIN
@@ -49,6 +49,11 @@ export const getDTHP = async (req, res) => {
       patios ON d.id_patio = patios.id
   LEFT JOIN
       enc_matprima ON d.id_matPrima = enc_matprima.id_enc
+   LEFT JOIN 
+   	user ON d.id_creador= user.id
+  LEFT JOIN
+    operarios ON user.nombre = operarios.id
+
       where othp.id= ?
   `;
       const [rows] = await pool.query(consulta,[id]);
@@ -68,34 +73,37 @@ export const getDTHPP = async (req, res) => {
 console.log('idpatio',id_patio, fecha_creacion_inicio,fecha_creacion_fin)
     try {
         let consulta = `
-        SELECT 
-        'dthp' as tabla,
-                d.hora_creacion,
-                d.esquinaSupIZ,
-                d.esquinaSupDA,
-                d.esquinaCentro,
-                d.esquinaInfDR,
-                d.esquinaInfIZ,
-                ROUND((
-                    d.esquinaSupIZ + d.esquinaSupDA + d.esquinaCentro + d.esquinaInfDR + 
-                    d.esquinaInfIZ) / 5) AS promedio,
-                d.fecha_creacion,
-              d.id_patio,
-                othp.id AS id_OTHP,
-                aserradero.nombre_aserradero AS aserradero,
-                patios.nombrePatio AS patio,
-                enc_matprima.nom_matPrima AS materiaPrima
-            FROM 
-                dthp d
-            LEFT JOIN
-                othp ON d.id_othp = othp.id
-            LEFT JOIN
-                aserradero ON d.id_asrd = aserradero.id
-            LEFT JOIN
-                patios ON d.id_patio = patios.id
-            LEFT JOIN
-                enc_matprima ON d.id_matPrima = enc_matprima.id_enc
-    
+       select 
+      d.hora_creacion,
+      d.id,
+      ROUND(((d.esquinaSupIZ+d.esquinaSupDA+d.esquinaCentro+d.esquinaInfDR+d.esquinaInfIZ)/5)) as promedio,
+      d.esquinaSupIZ,
+      d.esquinaSupDA,
+      d.esquinaCentro,
+      d.esquinaInfDR,
+      d.esquinaInfIZ,
+      d.fecha_creacion,
+      othp.id AS id_OTHP,
+      enc_matprima.nom_matPrima as materiaPrima,
+      aserradero.nombre_aserradero AS aserradero,
+      patios.nombrePatio AS patio,
+  		user.firmaUsr AS firma,
+        operarios.Nombre as NombreCreador
+
+  FROM 
+      dthp d
+  LEFT JOIN
+      othp ON d.id_OTHP = othp.id
+  LEFT JOIN
+      aserradero ON d.id_asrd = aserradero.id
+  LEFT JOIN
+      patios ON d.id_patio = patios.id
+  LEFT JOIN
+      enc_matprima ON d.id_matPrima = enc_matprima.id_enc
+  LEFT JOIN 
+   	user ON d.id_creador= user.id
+  LEFT JOIN
+    operarios ON user.nombre = operarios.id
             WHERE 1 = 1`;
 
         const params = [];

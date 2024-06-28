@@ -269,7 +269,7 @@ app.use(function(req, res, next) {
     app.use(DCPFM)
     app.use(DCPCD)
     
-
+    
     //Encabezados Maquinaria
     app.use(CKTA)
     app.use(CKEXT)

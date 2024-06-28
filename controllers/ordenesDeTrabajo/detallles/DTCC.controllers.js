@@ -6,7 +6,7 @@ export const postDTCC = async(req, res)=>{
     const estado= 2;
     
     const {
-        id_OTCC,
+      id_dthh,
         horneados,
         fecha_real,
         codigoInicio,
@@ -36,7 +36,7 @@ export const postDTCC = async(req, res)=>{
         }
         else{
             const consulta=`INSERT INTO dtcc(  
-                id_OTCC,
+                id_dthh,
                 horneados,
                 fecha_real,
                 codigoInicio,
@@ -58,7 +58,7 @@ export const postDTCC = async(req, res)=>{
                 ahumados,
                 id_creador)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[  
-            id_OTCC,
+          id_dthh,
             horneados,
             fecha_real,
             codigoInicio,

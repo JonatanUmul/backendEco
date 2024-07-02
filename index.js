@@ -117,6 +117,8 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     const app = express()
    
     // app.use(cors);
+
+   
     app.use(cors({
       
       origin: Origen, // Utiliza la variable de entorno correcta

@@ -117,8 +117,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     const app = express()
    
     // app.use(cors);
-
-   
+    
     app.use(cors({
       
       origin: Origen, // Utiliza la variable de entorno correcta
@@ -127,11 +126,15 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     }));
 
     // Middleware para configurar CORS
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", Origen);
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
+    app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", Origen);
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.header("Access-Control-Allow-Credentials", "true"); // Si necesitas enviar cookies
+      next();
+    });
+    
 
     app.use(bodyParser.json());
     app.use(express.json())   

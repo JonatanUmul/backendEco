@@ -35,6 +35,7 @@ WHERE d.username=?
         } 
    
         const id_rol=rows[0].id_rol;
+        const rol= rows[0].rol;
         const usuario= rows[0].username;
         const nombre= rows[0].nombres
         const id_creador= rows[0].id;
@@ -55,11 +56,11 @@ WHERE d.username=?
 
         console.log("Inicio de sesión exitoso");
 
-        const token = jwt.sign({username, id_rol, nombre, usuario, id_creador}, "Stack", {
+        const token = jwt.sign({username, id_rol, nombre, usuario, id_creador, rol}, "Stack", {
 
             expiresIn: '24h' // expires in 24 hours
 
-             });        res.status(200).json({ message: "Inicio de sesión exitoso", token, username, id_rol, usuario, nombre, id_creador });
+             });        res.status(200).json({ message: "Inicio de sesión exitoso", token, username, id_rol, usuario, nombre, id_creador, rol });
         console.log('Token',token)
     } catch (error) {
         console.error("Error al ejecutar la consulta:", error);

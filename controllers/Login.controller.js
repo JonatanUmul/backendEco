@@ -58,7 +58,7 @@ WHERE d.username=?
 
         const token = jwt.sign({username, id_rol, nombre, usuario, id_creador, rol}, "Stack", {
 
-            expiresIn: '24h' // expires in 24 hours
+            expiresIn: '1h' // expires in 24 hours
 
              });        res.status(200).json({ message: "Inicio de sesión exitoso", token, username, id_rol, usuario, nombre, id_creador, rol });
         console.log('Token',token)

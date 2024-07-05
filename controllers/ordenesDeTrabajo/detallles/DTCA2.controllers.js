@@ -24,26 +24,57 @@ export const getDTCA2 = async (req, res) => {
     try {
       // Consulta SQL para obtener todos los registros de la tabla dtp
       const consulta = `
-      SELECT 
-      d.id,
-      d.cantidad_inicial,
-      d.cernido_fino,
-      d.cernido_grueso,
+       SELECT 
+		d.id,
+		d.id_OTCA2,
+		d.id_creador,
+		d.cantidad_inicial,
+		d.fecha_creacion,
+		d.hora_creacion,
+		d.cernido_fino,
+		d.cernido_grueso,
       (cantidad_inicial-(cernido_fino+cernido_grueso)) as merma,
-      d.fecha_creacion,
-      otca2.id AS id_otca2,
+		d.hora_creacion,
+		d.fecha_creacion,
       enc_matprima.nom_matPrima as matPrima,
-      aserradero.nombre_aserradero AS aserradero
-    
-  FROM 
-      dtca2 d
-      LEFT JOIN 
-      otca2 ON d.id_OTCA2 = otca2.id
+		aserradero.nombre_aserradero AS aserradero,
+		otca2.id_creador,
+		user.nombre AS creador,
+		user1.firmaUsr AS JefeMateriaPrim,
+		user2.firmaUsr AS FirmaJefeProdu,
+		operarios.Nombre AS NombreJefeMP,
+		user3.nombre AS idEcargado,
+		operarios1.Nombre AS NombreEncargadoMP
+		
+	FROM 
+		dtca2 d
       LEFT JOIN 
       enc_matprima ON d.id_MP = enc_matprima.id_enc
+
       LEFT JOIN 
-      aserradero ON d.id_aserradero = aserradero.id
-        
+		aserradero ON d.id_aserradero = aserradero.id	
+		
+		LEFT join
+		otca2 ON d.id_OTCA2=otca2.id
+		
+		LEFT join
+		user ON otca2.id_creador=user.id
+		
+		LEFT JOIN 
+		user AS user1 ON d.id_creador =user1.id
+		
+		LEFT JOIN 
+		user AS user2 ON user.nombre =user2.nombre
+		
+		LEFT join
+		operarios ON user.nombre =operarios.id
+		
+		LEFT JOIN 
+		user AS user3 ON d.id_creador= user3.id
+		
+	   LEFT join
+		operarios as operarios1 ON user3.nombre =operarios1.id
+		
       where otca2.id=?
   
   `;
@@ -66,26 +97,57 @@ export const getDTCAA2 = async (req, res) => {
   
     try {
         let consulta = `
-        SELECT 
+       SELECT 
 		d.id,
+		d.id_OTCA2,
+		d.id_creador,
 		d.cantidad_inicial,
 		d.fecha_creacion,
 		d.hora_creacion,
 		d.cernido_fino,
 		d.cernido_grueso,
-        (cantidad_inicial-(cernido_fino+cernido_grueso)) as merma,
+      (cantidad_inicial-(cernido_fino+cernido_grueso)) as merma,
 		d.hora_creacion,
 		d.fecha_creacion,
-        enc_matprima.nom_matPrima as matPrima,
-		aserradero.nombre_aserradero AS aserradero
-
+      enc_matprima.nom_matPrima as matPrima,
+		aserradero.nombre_aserradero AS aserradero,
+		otca2.id_creador,
+		user.nombre AS creador,
+		user1.firmaUsr AS JefeMateriaPrim,
+		user2.firmaUsr AS FirmaJefeProdu,
+		operarios.Nombre AS NombreJefeMP,
+		user3.nombre AS idEcargado,
+		operarios1.Nombre AS NombreEncargadoMP
+		
 	FROM 
 		dtca2 d
-        LEFT JOIN 
-        enc_matprima ON d.id_MP = enc_matprima.id_enc
+      LEFT JOIN 
+      enc_matprima ON d.id_MP = enc_matprima.id_enc
 
-        LEFT JOIN 
-		aserradero ON d.id_aserradero = aserradero.id
+      LEFT JOIN 
+		aserradero ON d.id_aserradero = aserradero.id	
+		
+		LEFT join
+		otca2 ON d.id_OTCA2=otca2.id
+		
+		LEFT join
+		user ON otca2.id_creador=user.id
+		
+		LEFT JOIN 
+		user AS user1 ON d.id_creador =user1.id
+		
+		LEFT JOIN 
+		user AS user2 ON user.nombre =user2.nombre
+		
+		LEFT join
+		operarios ON user.nombre =operarios.id
+		
+		LEFT JOIN 
+		user AS user3 ON d.id_creador= user3.id
+		
+	   LEFT join
+		operarios as operarios1 ON user3.nombre =operarios1.id
+		
     WHERE 1=1`;
   
         const params = [];

@@ -39,34 +39,45 @@ export const getDASERRIN = async (req, res) => {
   try {
     // Consulta SQL para obtener todos los registros de la tabla dtp
     const consulta = `
-        select 
-		d.id,
-		d.cantidad_inicial,
-		d.cantidad_final,
-		d.fecha_creacion,
-		otsa.id AS id_otsa,
-    enc_matprima.nom_matPrima as matPrima,
-		aserradero.nombre_aserradero AS aserradero,
-		patios.nombrePatio AS patio,
-		user.firmaUsr AS firma,
-    operarios.Nombre as NombreJefe
-	
-
-	FROM 
-		daserrin d
-    LEFT JOIN
-		otsa ON d.id_OTSaserrin = otsa.id
-    LEFT JOIN 
-  enc_matprima ON d.id_MP = enc_matprima.id_enc
-	LEFT JOIN 
-		aserradero ON d.id_asrdSMP = aserradero.id
-    LEFT JOIN 
-		patios ON d.id_patio = patios.id	
-		  LEFT JOIN 
-   	user ON d.id_creador= user.id
-   	LEFT JOIN
+        SELECT 
+    'daserrin' AS tabla,
+    d.id,
+    d.id_patio,
+    d.cantidad_inicial,
+    (d.cantidad_inicial - d.cantidad_final) AS merma,
+    d.cantidad_final,
+    d.hora_creacion,
+    d.fecha_creacion,
+    otsa.id AS id_OTSA,
+    enc_matprima.nom_matPrima AS matPrima,
+    aserradero.nombre_aserradero AS aserradero,
+    patios.nombrePatio AS patio,
+    user.firmaUsr AS firma,
+    operarios.Nombre AS NombreCreador,
+    user1.id AS idjefe,
+    operarioJefe.Nombre AS NombreJefe,
+   user2.firmaUsr AS firmaJefe
+FROM 
+    daserrin d
+LEFT JOIN
+    otsa ON d.id_OTSaserrin = otsa.id
+LEFT JOIN
+    enc_matprima ON d.id_MP = enc_matprima.id_enc
+LEFT JOIN
+    aserradero ON d.id_asrdSMP = aserradero.id
+LEFT JOIN
+    patios ON d.id_patio = patios.id
+LEFT JOIN 
+    user ON d.id_creador = user.id
+LEFT JOIN
     operarios ON user.nombre = operarios.id
-
+LEFT JOIN
+    user AS user1 ON otsa.id_creador = user1.id
+LEFT JOIN
+    operarios AS operarioJefe ON user1.nombre = operarioJefe.id
+LEFT JOIN
+    user AS user2 ON user1.nombre = user2.id
+    
 
     where otsa.id= ?
 
@@ -90,35 +101,45 @@ export const getDASERRI = async (req, res) => {
 
   try {
       let consulta = `
-      SELECT 
-      'daserrin' as tabla,
-      d.id,
-      d.id_patio,
-      d.cantidad_inicial,
-      (d.cantidad_inicial - d.cantidad_final) AS merma,
-      d.cantidad_final,
-      d.hora_creacion,
-      d.fecha_creacion,
-      otsa.id AS id_OTSA,
-      enc_matprima.nom_matPrima as matPrima,
-      aserradero.nombre_aserradero AS aserradero,
-      patios.nombrePatio AS patio,
-      user.firmaUsr AS firma,
-      operarios.Nombre as NombreCreador
-  FROM 
-      daserrin d
-      LEFT JOIN
-      otsa ON d.id_OTSaserrin = otsa.id
-      LEFT JOIN
-      enc_matprima ON d.id_MP = enc_matprima.id_enc
-      LEFT JOIN
-      aserradero ON d.id_asrdSMP = aserradero.id
-      LEFT JOIN
-      patios ON d.id_patio = patios.id
-      LEFT JOIN 
-   	  user ON d.id_creador= user.id
-   	  LEFT JOIN
-      operarios ON user.nombre = operarios.id
+     SELECT 
+    'daserrin' AS tabla,
+    d.id,
+    d.id_patio,
+    d.cantidad_inicial,
+    (d.cantidad_inicial - d.cantidad_final) AS merma,
+    d.cantidad_final,
+    d.hora_creacion,
+    d.fecha_creacion,
+    otsa.id AS id_OTSA,
+    enc_matprima.nom_matPrima AS matPrima,
+    aserradero.nombre_aserradero AS aserradero,
+    patios.nombrePatio AS patio,
+    user.firmaUsr AS firma,
+    operarios.Nombre AS NombreCreador,
+    user1.id AS idjefe,
+    operarioJefe.Nombre AS NombreJefe,
+   user2.firmaUsr AS firmaJefe
+FROM 
+    daserrin d
+LEFT JOIN
+    otsa ON d.id_OTSaserrin = otsa.id
+LEFT JOIN
+    enc_matprima ON d.id_MP = enc_matprima.id_enc
+LEFT JOIN
+    aserradero ON d.id_asrdSMP = aserradero.id
+LEFT JOIN
+    patios ON d.id_patio = patios.id
+LEFT JOIN 
+    user ON d.id_creador = user.id
+LEFT JOIN
+    operarios ON user.nombre = operarios.id
+LEFT JOIN
+    user AS user1 ON otsa.id_creador = user1.id
+LEFT JOIN
+    operarios AS operarioJefe ON user1.nombre = operarioJefe.id
+LEFT JOIN
+    user AS user2 ON user1.nombre = user2.id
+    
 
   WHERE 1=1`;
 

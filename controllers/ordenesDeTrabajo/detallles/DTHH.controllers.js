@@ -28,39 +28,61 @@ export const getDTHH = async(req, res)=>{
     const consulta = 
     `SELECT 
     d.id,
-    'dthh' as tabla,
     d.codigoInicio,
-    d.CodigoFin,
+    d.id_OTHH,
+    d.codigoFin,
     d.horneado,
     d.mermasCrudas,
     d.librasBarro,
     d.librasAserrin,
-    d.fecha_creacion,
-    othh.id AS id_othh,
-    turno.turno AS turno,
+    d.fecha_creacion AS fechaHorneado,
+    turno.turno AS turnoHorneado,
     aserradero.nombre_aserradero AS aserradero,
-    tipocernido.tipoCernido AS tipocernido,
-    ufmodelo.nombre_modelo as ufmodelo,
-    enc_maq.nombre_maq as enc_maq,
-    operarios.Nombre as operarios
+    tipocernido.tipoCernido AS tipocernido1,
+    tipocernido2.tipoCernido AS tipocernido2,
+    d.librasAserrin2,
+    ufmodelo.nombre_modelo AS ModeloEco,
+    COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formula,
+    enc_maq.nombre_maq AS Horno,
+    operarios.Nombre AS Hornero,
+    dtcc.aprobados,
+    dtcc.altos,
+    dtcc.bajos,
+    dtcc.rajadosCC,
+    dtcc.crudoCC,
+    dtcc.quemados,
+    dtcc.ahumados,
+    dtcc.mermas_hornos,
+    COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
+    operarios1.Nombre AS EncargadoCC,
+     CONCAT(ROUND((dtcc.aprobados / d.horneado * 100), 0), '%') AS porcentaje,
+   othh.id_creador AS idjefe,
+   user.nombre AS idJefe,
+   operarios2.Nombre AS NobreJefe,
+   userFirma.firmaUsr AS firmaJefe,
+	userFEncargado.nombre AS idEncargado,
+	operariosFencargado.Nombre AS NombreEncargado,
+	userEfirma.firmaUsr AS FirmaEncargado
     
-FROM 
-    dthh d
-LEFT JOIN 
-    othh ON d.id_OTHH = othh.id
-LEFT JOIN 
-    turno ON d.id_turno = turno.id
-LEFT JOIN 
-    aserradero ON d.id_aserradero = aserradero.id
-LEFT JOIN 
-    tipocernido ON d.id_cernidodetalle= tipocernido.id
-LEFT JOIN
-	ufmodelo on d.id_modelo= ufmodelo.id_mod
-LEFT JOIN
-	enc_maq on d.id_horno= enc_maq.id_maq
-LEFT JOIN
-	operarios on id_hornero = operarios.id
-    
+FROM dthh d
+LEFT JOIN turno ON d.id_turno = turno.id
+LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
+LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
+LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
+LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN enc_maq ON d.id_horno = enc_maq.id_maq
+LEFT JOIN operarios ON d.id_hornero = operarios.id
+LEFT JOIN dtcc ON d.id = dtcc.id_dthh
+LEFT JOIN operarios as operarios1 ON dtcc.id_operarioCC=operarios1.id
+LEFT JOIN othh ON d.id_OTHH= othh.id
+LEFT JOIN user ON othh.id_creador=user.id
+LEFT JOIN operarios AS operarios2 ON user.nombre =operarios2.id
+LEFT JOIN user AS userFirma ON othh.id_creador=userFirma.id
+LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
+LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
+LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
+
+
     where d.id_OTHH = ?`
     const [rows]= await pool.query(consulta, [id])
     // Enviar los datos obtenidos al cliente
@@ -78,55 +100,67 @@ export const getSSDTH = async(req, res)=>{
     const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est}= req.params
     try {
     let consulta = 
-    `  SELECT 
-    'DTHH' as tabla,
+    `SELECT 
+    'cthh' as tabla,
     d.id,
     d.id_modelo,
     d.id_turno,
-    d.id_horno as 'numeroHorno',
+    d.id_horno,
     d.codigoInicio,
-    d.CodigoFin,
+    d.id_OTHH,
+    d.codigoFin,
     d.horneado,
     d.mermasCrudas,
     d.librasBarro,
     d.librasAserrin,
-    d.fecha_creacion,
-    d.id_est,
-    othh.id AS id_othh,
-    turno.turno AS turno,
+    d.fecha_creacion AS fechaHorneado,
+    turno.turno AS turnoHorneado,
     aserradero.nombre_aserradero AS aserradero,
-    tipocernido.tipoCernido AS tipocernido,
-    ufmodelo.nombre_modelo as ufmodelo,
-    enc_maq.nombre_maq as enc_maq,
-    operarios.Nombre as operarios,
+    tipocernido.tipoCernido AS tipocernido1,
+    tipocernido2.tipoCernido AS tipocernido2,
+    d.librasAserrin2,
+    ufmodelo.nombre_modelo AS ModeloEco,
+    COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formula,
+    enc_maq.nombre_maq AS Horno,
+    operarios.Nombre AS Hornero,
     dtcc.aprobados,
-    dtcc.modelo,
-    dtcc.id_horno,
-    dtcc.turnoHorneado,
-    dtcc.fechaHorneado,
     dtcc.altos,
     dtcc.bajos,
     dtcc.rajadosCC,
     dtcc.crudoCC,
+    dtcc.quemados,
+    dtcc.ahumados,
+    dtcc.mermas_hornos,
+    COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
+    operarios1.Nombre AS EncargadoCC,
+     CONCAT(ROUND((dtcc.aprobados / d.horneado * 100), 0), '%') AS porcentaje,
+   othh.id_creador AS idjefe,
+   user.nombre AS idJefe,
+   operarios2.Nombre AS NobreJefe,
+   userFirma.firmaUsr AS firmaJefe,
+	userFEncargado.nombre AS idEncargado,
+	operariosFencargado.Nombre AS NombreEncargado,
+	userEfirma.firmaUsr AS FirmaEncargado
     
-    ROUND(( (dtcc.aprobados/d.horneado)*100)) AS porcentaje
-FROM 
-    dthh d
-LEFT JOIN 
-    othh ON d.id_OTHH = othh.id
-LEFT JOIN 
-    turno ON d.id_turno = turno.id
-LEFT JOIN 
-    aserradero ON d.id_aserradero = aserradero.id
-LEFT JOIN 
-    tipocernido ON d.id_cernidodetalle= tipocernido.id
-LEFT JOIN
-    ufmodelo on d.id_modelo= ufmodelo.id_mod
-LEFT JOIN
-    enc_maq on d.id_horno= enc_maq.id_maq
-LEFT JOIN
-    operarios on id_hornero = operarios.id
-LEFT JOIN dtcc ON  dtcc.fechaHorneado = d.fecha_creacion AND dtcc.modelo = d.id_modelo AND dtcc.id_horno = d.id_horno AND dtcc.turnoHorneado = d.id_turno
+FROM dthh d
+LEFT JOIN turno ON d.id_turno = turno.id
+LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
+LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
+LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
+LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN enc_maq ON d.id_horno = enc_maq.id_maq
+LEFT JOIN operarios ON d.id_hornero = operarios.id
+LEFT JOIN dtcc ON d.id = dtcc.id_dthh
+LEFT JOIN operarios as operarios1 ON dtcc.id_operarioCC=operarios1.id
+LEFT JOIN othh ON d.id_OTHH= othh.id
+LEFT JOIN user ON othh.id_creador=user.id
+LEFT JOIN operarios AS operarios2 ON user.nombre =operarios2.id
+LEFT JOIN user AS userFirma ON othh.id_creador=userFirma.id
+LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
+LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
+LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
+
+
     WHERE 1= 1`;
     
     const params=[]

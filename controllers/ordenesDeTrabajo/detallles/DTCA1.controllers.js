@@ -24,23 +24,48 @@ export const getDTCA1 = async (req, res) => {
       // Consulta SQL para obtener todos los registros de la tabla dtp
       const consulta = `
       SELECT 
-      d.id,
-      d.CantidadInicial,
-      d.CantidadFinal,
-      d.fecha_creacion,
-      otca1.id AS id_otca1,
-      enc_matprima.nom_matPrima as matPrima,
-      aserradero.nombre_aserradero AS aserradero
-    
-  FROM 
-      dtca1 d
-  LEFT JOIN
-      enc_matprima ON d.id_MP = enc_matprima.id_enc
-  LEFT JOIN
-      otca1 ON d.id_OTCA1 = otca1.id
-  LEFT JOIN
-      aserradero ON d.id_aserradero = aserradero.id
+    d.id,
+    d.id_creador,
+    d.id_OTCA1,
+    d.CantidadInicial,
+    (d.CantidadInicial - d.CantidadFinal) AS merma,
+    d.CantidadFinal,
+    d.hora_creacion,
+    d.fecha_creacion,
+    enc_matprima.nom_matPrima AS matPrima,
+    aserradero.nombre_aserradero AS aserradero,
+    user.firmaUsr AS firmaEncargado,
+    operarios.Nombre AS NombreCreador,
+    user2.firmaUsr AS firmaJefe,
+    user1.nombre AS idJefe,
+    operarios3.Nombre AS JefeMateriaPrim
 
+    
+FROM 
+    dtca1 d
+LEFT JOIN
+    enc_matprima ON d.id_MP = enc_matprima.id_enc
+
+LEFT JOIN
+    aserradero ON d.id_aserradero = aserradero.id
+
+LEFT JOIN
+    otca1 ON d.id_OTCA1 = otca1.id
+
+LEFT JOIN
+    user ON d.id_creador = user.id  
+
+LEFT JOIN 
+	operarios ON user.nombre = operarios.id
+	
+left JOIN
+	user AS user2 on otca1.id_creador =user2.id
+	
+LEFT JOIN
+	user AS user1 ON otca1.id_creador=user1.id
+
+LEFT JOIN 
+	operarios AS operarios3 ON user1.nombre =operarios3.id
       where otca1.id=?
   
   `;
@@ -64,25 +89,49 @@ export const getDTCAA1 = async (req, res) => {
   
     try {
         let consulta = `
-        SELECT 
-		d.id,
-		d.CantidadInicial,
-		(d.CantidadInicial - d.CantidadFinal) AS merma,
-		d.CantidadFinal,
-		d.hora_creacion,
-		d.fecha_creacion,
-	
-        enc_matprima.nom_matPrima as matPrima,
-		aserradero.nombre_aserradero AS aserradero
-   
-	
-	FROM 
-		dtca1 d
+       SELECT 
+    d.id,
+    d.id_creador,
+    d.id_OTCA1,
+    d.CantidadInicial,
+    (d.CantidadInicial - d.CantidadFinal) AS merma,
+    d.CantidadFinal,
+    d.hora_creacion,
+    d.fecha_creacion,
+    enc_matprima.nom_matPrima AS matPrima,
+    aserradero.nombre_aserradero AS aserradero,
+    user.firmaUsr AS firmaEncargado,
+    operarios.Nombre AS NombreCreador,
+    user2.firmaUsr AS firmaJefe,
+    user1.nombre AS idJefe,
+    operarios3.Nombre AS JefeMateriaPrim
 
-    LEFT JOIN
-        enc_matprima ON d.id_MP = enc_matprima.id_enc
-	LEFT JOIN
-		aserradero ON d.id_aserradero = aserradero.id
+    
+FROM 
+    dtca1 d
+LEFT JOIN
+    enc_matprima ON d.id_MP = enc_matprima.id_enc
+
+LEFT JOIN
+    aserradero ON d.id_aserradero = aserradero.id
+
+LEFT JOIN
+    otca1 ON d.id_OTCA1 = otca1.id
+
+LEFT JOIN
+    user ON d.id_creador = user.id  
+
+LEFT JOIN 
+	operarios ON user.nombre = operarios.id
+	
+left JOIN
+	user AS user2 on otca1.id_creador =user2.id
+	
+LEFT JOIN
+	user AS user1 ON otca1.id_creador=user1.id
+
+LEFT JOIN 
+	operarios AS operarios3 ON user1.nombre =operarios3.id
         
     WHERE 1=1`;
   

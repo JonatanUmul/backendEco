@@ -136,8 +136,8 @@ where d.id_OTCC = ?`
 
 export const getsDTCCC = async(req, res)=>{
 
-    const {fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo}= req.params
-    console.log('datos backend',fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo)
+    const {fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo, id_dthh}= req.params
+    console.log('datos backend',fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo, id_dthh)
     try {
     let consulta = 
     `SELECT
@@ -159,6 +159,7 @@ export const getsDTCCC = async(req, res)=>{
     d.crudoCC,
     d.quemados,
     d.ahumados,
+    d.id_dthh,
     operario_encargado.Nombre AS encargadoCC,
     operario_auditor.Nombre AS Aditor,
     ufmodelo.nombre_modelo AS modeloUF,
@@ -191,6 +192,10 @@ const params=[]
       if (modelo !== 'null') {
         consulta += ' AND (d.modelo IS NULL OR d.modelo = ?)';
         params.push(modelo);
+      }
+      if (id_dthh !== 'null') {
+        consulta += ' AND (d.id_dthh IS NULL OR d.id_dthh = ?)';
+        params.push(id_dthh);
       }
     
      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {

@@ -28,6 +28,7 @@ export const getDTHH = async(req, res)=>{
     const consulta = 
     `SELECT 
     d.id,
+    'cthh' as tabla,
     d.codigoInicio,
     d.id_OTHH,
     d.codigoFin,

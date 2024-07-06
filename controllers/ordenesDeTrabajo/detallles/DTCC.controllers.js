@@ -108,6 +108,7 @@ export const getDTCC = async(req, res)=>{
     d.crudoCC,
     d.quemados,
     d.ahumados,
+    d.id_dthh,
     operario_encargado.Nombre AS encargadoCC,
     operario_auditor.Nombre AS Aditor,
     ufmodelo.nombre_modelo AS modeloUF,
@@ -120,7 +121,7 @@ LEFT JOIN ufmodelo ON d.modelo = ufmodelo.id_mod
 LEFT JOIN turno AS turnoCC ON d.turnoCC = turnoCC.id  
 LEFT JOIN turno AS turnoHorneado ON d.turnoHorneado = turnoHorneado.id
 
-where d.id_OTCC = ?`
+where d.id_dthh = ?`
     const [rows]= await pool.query(consulta, [id])
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });

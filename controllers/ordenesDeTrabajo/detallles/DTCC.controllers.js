@@ -90,6 +90,7 @@ export const postDTCC = async(req, res)=>{
 export const getDTCC = async(req, res)=>{
 
     const id= req.params.id
+    console.log('id recibido', id)
     try {
     const consulta = 
     `SELECT
